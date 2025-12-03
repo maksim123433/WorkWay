@@ -1,0 +1,709 @@
+{% load static %}
+
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkWay - Панель работодателя</title>
+
+    <link rel="stylesheet" href="{% static 'css/employer.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Стили для быстрых действий в боковой панели */
+        .quick-actions-sidebar {
+            background: white;
+            padding: 25px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .quick-actions-sidebar h3 {
+            font-size: 1.2rem;
+            color: #1e293b;
+            margin-bottom: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quick-actions-sidebar h3 i {
+            color: #3b82f6;
+        }
+
+        .sidebar-action-card {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            cursor: pointer;
+        }
+
+        .sidebar-action-card:hover {
+            background: white;
+            border-color: #c7d2fe;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .sidebar-action-card .action-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            color: white;
+            font-size: 1.3rem;
+        }
+
+        .sidebar-action-card h4 {
+            font-size: 1rem;
+            color: #1e293b;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .sidebar-action-card p {
+            font-size: 0.85rem;
+            color: #64748b;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .sidebar-action-card .btn-quick {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-action-card .btn-quick:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Статистика */
+        .sidebar-stats {
+            background: white;
+            padding: 25px 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar-stats h3 {
+            font-size: 1.2rem;
+            color: #1e293b;
+            margin-bottom: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-stats h3 i {
+            color: #10b981;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .stat-item:nth-child(1) .stat-value { color: #3b82f6; }
+        .stat-item:nth-child(2) .stat-value { color: #10b981; }
+        .stat-item:nth-child(3) .stat-value { color: #f59e0b; }
+        .stat-item:nth-child(4) .stat-value { color: #8b5cf6; }
+    </style>
+</head>
+<body>
+    <!-- Шапка -->
+    <nav class="employer-navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-briefcase"></i>
+                <span>WorkWay Employer</span>
+            </div>
+            <div class="nav-user">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="user-details">
+                        <span class="user-name">{{ user.company_name }}</span>
+                        <span class="user-role">Работодатель</span>
+                    </div>
+                    <button class="logout-btn" title="Выйти">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <!-- Боковая панель с быстрыми действиями -->
+        <aside class="sidebar">
+            <div class="quick-actions-sidebar">
+                <h3><i class="fas fa-bolt"></i> Быстрые действия</h3>
+
+                <div class="sidebar-action-card" id="quickCreateVacancy">
+                    <div class="action-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <h4>Новая вакансия</h4>
+                    <p>Создайте новую вакансию для поиска сотрудников</p>
+                    <button class="btn-quick">
+                        <i class="fas fa-plus"></i>
+                        <span>Создать</span>
+                    </button>
+                </div>
+
+                <div class="sidebar-action-card" id="quickSearch">
+                    <div class="action-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h4>Поиск кандидатов</h4>
+                    <p>Найдите подходящих кандидатов по базе резюме</p>
+                    <button class="btn-quick">
+                        <i class="fas fa-search"></i>
+                        <span>Найти</span>
+                    </button>
+                </div>
+
+                <div class="sidebar-action-card" id="quickViewResponses">
+                    <div class="action-icon">
+                        <i class="fas fa-envelope-open"></i>
+                    </div>
+                    <h4>Новые отклики</h4>
+                    <p>Просмотр новых откликов на вакансии ({{ new_responses }})</p>
+                    <button class="btn-quick">
+                        <i class="fas fa-eye"></i>
+                        <span>Просмотреть</span>
+                    </button>
+                </div>
+
+                <div class="sidebar-action-card" id="quickSchedule">
+                    <div class="action-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h4>Назначить собеседование</h4>
+                    <p>Запланировать встречу с кандидатом</p>
+                    <button class="btn-quick">
+                        <i class="fas fa-calendar-plus"></i>
+                        <span>Назначить</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-stats">
+                <h3><i class="fas fa-chart-bar"></i> Статистика</h3>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-value">{{ active_vacancies }}</span>
+                        <span class="stat-label">Активных вакансий</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">{{ total_applications }}</span>
+                        <span class="stat-label">Всего откликов</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">{{ interviews_scheduled }}</span>
+                        <span class="stat-label">Собеседований</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value">{{ hired_candidates }}</span>
+                        <span class="stat-label">Нанято</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Основной контент -->
+        <main class="main-content">
+            <!-- Заголовок и кнопка -->
+            <div class="content-header">
+                <h1>Управление вакансиями</h1>
+                <button class="btn-primary" id="createVacancyBtn">
+                    <i class="fas fa-plus"></i>
+                    <span>Создать вакансию</span>
+                </button>
+            </div>
+
+            <!-- Список вакансий -->
+            <section class="vacancies-section">
+                <h2>Мои вакансии</h2>
+                <p class="section-subtitle">Всего: {{ vacancies_count }} активных вакансий</p>
+
+                {% if vacancies %}
+                <div class="vacancies-list">
+                    {% for vacancy in vacancies %}
+                    <div class="vacancy-card" data-id="{{ vacancy.id }}">
+                        <div class="vacancy-header">
+                            <div class="vacancy-title-row">
+                                <h3>{{ vacancy.title }}</h3>
+                                <span class="vacancy-status {% if vacancy.is_active %}status-active{% else %}status-inactive{% endif %}">
+                                    {% if vacancy.is_active %}Активна{% else %}Неактивна{% endif %}
+                                </span>
+                            </div>
+                            <div class="vacancy-meta">
+                                <span class="meta-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    {{ vacancy.location }}
+                                </span>
+                                <span class="meta-item">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    {{ vacancy.salary }}
+                                </span>
+                                <span class="meta-item">
+                                    <i class="fas fa-clock"></i>
+                                    {{ vacancy.created_at|date:"d.m.Y" }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="vacancy-body">
+                            <p class="vacancy-description">{{ vacancy.description|truncatechars:150 }}</p>
+
+                            <div class="vacancy-stats">
+                                <div class="stat">
+                                    <i class="fas fa-eye"></i>
+                                    <span>{{ vacancy.views }} просмотров</span>
+                                </div>
+                                <div class="stat">
+                                    <i class="fas fa-paper-plane"></i>
+                                    <span>{{ vacancy.applications }} откликов</span>
+                                </div>
+                                <div class="stat">
+                                    <i class="fas fa-user-check"></i>
+                                    <span>{{ vacancy.interviews }} собеседований</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="vacancy-actions">
+                            <button class="btn-action btn-view" data-id="{{ vacancy.id }}">
+                                <i class="fas fa-eye"></i>
+                                <span>Просмотр</span>
+                            </button>
+                            <button class="btn-action btn-edit" data-id="{{ vacancy.id }}">
+                                <i class="fas fa-edit"></i>
+                                <span>Редактировать</span>
+                            </button>
+                            <button class="btn-action btn-applications" data-id="{{ vacancy.id }}">
+                                <i class="fas fa-users"></i>
+                                <span>Отклики ({{ vacancy.applications }})</span>
+                            </button>
+                            <button class="btn-action btn-{% if vacancy.is_active %}pause{% else %}activate{% endif %}" data-id="{{ vacancy.id }}">
+                                <i class="fas fa-{% if vacancy.is_active %}pause{% else %}play{% endif %}"></i>
+                                <span>{% if vacancy.is_active %}Приостановить{% else %}Активировать{% endif %}</span>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-file-alt"></i>
+                    <h3>У вас пока нет вакансий</h3>
+                    <p>Создайте первую вакансию, чтобы начать поиск сотрудников</p>
+                    <button class="btn-primary" id="createFirstVacancyBtn">
+                        <i class="fas fa-plus"></i>
+                        <span>Создать первую вакансию</span>
+                    </button>
+                </div>
+                {% endif %}
+            </section>
+
+            <!-- Форма создания вакансии (скрыта по умолчанию) -->
+            <section class="create-vacancy-section" id="createVacancyForm" style="display: none;">
+                <div class="form-header">
+                    <h2><i class="fas fa-plus-circle"></i> Создание новой вакансии</h2>
+                    <p>Заполните форму, чтобы опубликовать вакансию</p>
+                </div>
+
+                <form id="vacancyForm" method="POST">
+                    {% csrf_token %}
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="title">
+                                <i class="fas fa-heading"></i>
+                                Название должности *
+                            </label>
+                            <input type="text" id="title" name="title" required
+                                   placeholder="Например: Python разработчик">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="category">
+                                <i class="fas fa-tag"></i>
+                                Категория *
+                            </label>
+                            <select id="category" name="category" required>
+                                <option value="">Выберите категорию</option>
+                                <option value="it">IT и программирование</option>
+                                <option value="design">Дизайн и творчество</option>
+                                <option value="marketing">Маркетинг и реклама</option>
+                                <option value="sales">Продажи и обслуживание</option>
+                                <option value="management">Управление и менеджмент</option>
+                                <option value="finance">Финансы и бухгалтерия</option>
+                                <option value="other">Другое</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Местоположение *
+                            </label>
+                            <input type="text" id="location" name="location" required
+                                   placeholder="Например: Москва, удалённо">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="employment_type">
+                                <i class="fas fa-briefcase"></i>
+                                Тип занятости *
+                            </label>
+                            <select id="employment_type" name="employment_type" required>
+                                <option value="">Выберите тип</option>
+                                <option value="full">Полная занятость</option>
+                                <option value="part">Частичная занятость</option>
+                                <option value="project">Проектная работа</option>
+                                <option value="internship">Стажировка</option>
+                                <option value="remote">Удалённая работа</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="salary_min">
+                                <i class="fas fa-money-bill-wave"></i>
+                                Зарплата (от)
+                            </label>
+                            <input type="number" id="salary_min" name="salary_min"
+                                   placeholder="Минимальная зарплата">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="salary_max">
+                                <i class="fas fa-money-bill-wave"></i>
+                                Зарплата (до)
+                            </label>
+                            <input type="number" id="salary_max" name="salary_max"
+                                   placeholder="Максимальная зарплата">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="currency">
+                                <i class="fas fa-ruble-sign"></i>
+                                Валюта
+                            </label>
+                            <select id="currency" name="currency">
+                                <option value="RUB">₽ Рубли</option>
+                                <option value="USD">$ Доллары</option>
+                                <option value="EUR">€ Евро</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">
+                            <i class="fas fa-file-alt"></i>
+                            Описание вакансии *
+                        </label>
+                        <textarea id="description" name="description" rows="8" required
+                                  placeholder="Опишите должностные обязанности, требования к кандидату, условия работы..."></textarea>
+                        <div class="char-counter">
+                            <span id="charCount">0</span>/5000 символов
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="requirements">
+                            <i class="fas fa-list-check"></i>
+                            Требования к кандидату
+                        </label>
+                        <textarea id="requirements" name="requirements" rows="4"
+                                  placeholder="Опыт работы, навыки, образование..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="benefits">
+                            <i class="fas fa-gift"></i>
+                            Мы предлагаем
+                        </label>
+                        <textarea id="benefits" name="benefits" rows="4"
+                                  placeholder="Условия работы, бонусы, льготы..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="experience">
+                                <i class="fas fa-chart-line"></i>
+                                Требуемый опыт
+                            </label>
+                            <select id="experience" name="experience">
+                                <option value="">Не имеет значения</option>
+                                <option value="no">Без опыта</option>
+                                <option value="1-3">1-3 года</option>
+                                <option value="3-5">3-5 лет</option>
+                                <option value="5+">Более 5 лет</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="education">
+                                <i class="fas fa-graduation-cap"></i>
+                                Образование
+                            </label>
+                            <select id="education" name="education">
+                                <option value="">Не имеет значения</option>
+                                <option value="secondary">Среднее</option>
+                                <option value="specialized">Среднее специальное</option>
+                                <option value="higher">Высшее</option>
+                                <option value="bachelor">Бакалавр</option>
+                                <option value="master">Магистр</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" id="cancelBtn">
+                            <i class="fas fa-times"></i>
+                            <span>Отмена</span>
+                        </button>
+                        <button type="submit" class="btn-success">
+                            <i class="fas fa-check"></i>
+                            <span>Опубликовать вакансию</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <script src="{% static 'js/employer.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const createBtn = document.getElementById('createVacancyBtn');
+            const createFirstBtn = document.getElementById('createFirstVacancyBtn');
+            const quickCreateBtn = document.querySelector('#quickCreateVacancy .btn-quick');
+            const vacancyForm = document.getElementById('createVacancyForm');
+            const cancelBtn = document.getElementById('cancelBtn');
+            const descriptionField = document.getElementById('description');
+            const charCount = document.getElementById('charCount');
+
+            // Функция для показа формы вакансии
+            function showVacancyForm() {
+                vacancyForm.style.display = 'block';
+                vacancyForm.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            // Функция для скрытия формы вакансии
+            function hideVacancyForm() {
+                vacancyForm.style.display = 'none';
+                document.getElementById('vacancyForm').reset();
+                charCount.textContent = '0';
+            }
+
+            // Счетчик символов для описания
+            if (descriptionField) {
+                descriptionField.addEventListener('input', function() {
+                    charCount.textContent = this.value.length;
+                });
+            }
+
+            // Обработчики для кнопок создания вакансии
+            if (createBtn) createBtn.addEventListener('click', showVacancyForm);
+            if (createFirstBtn) createFirstBtn.addEventListener('click', showVacancyForm);
+            if (quickCreateBtn) quickCreateBtn.addEventListener('click', showVacancyForm);
+
+            // Отмена создания вакансии
+            if (cancelBtn) cancelBtn.addEventListener('click', hideVacancyForm);
+
+            // Обработчики быстрых действий в боковой панели
+            document.querySelectorAll('.sidebar-action-card .btn-quick').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const actionCard = this.closest('.sidebar-action-card');
+                    const actionId = actionCard.id;
+
+                    switch(actionId) {
+                        case 'quickCreateVacancy':
+                            showVacancyForm();
+                            break;
+                        case 'quickSearch':
+                            alert('Поиск кандидатов - функция в разработке');
+                            break;
+                        case 'quickViewResponses':
+                            alert('Просмотр откликов - функция в разработке');
+                            break;
+                        case 'quickSchedule':
+                            alert('Назначение собеседования - функция в разработке');
+                            break;
+                    }
+                });
+            });
+
+            // Клик по карточкам быстрых действий
+            document.querySelectorAll('.sidebar-action-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (!e.target.closest('.btn-quick')) {
+                        const actionId = this.id;
+                        const btn = this.querySelector('.btn-quick');
+                        if (btn) btn.click();
+                    }
+                });
+            });
+
+            // Отправка формы вакансии
+            const vacancyFormElement = document.getElementById('vacancyForm');
+            if (vacancyFormElement) {
+                vacancyFormElement.addEventListener('submit', function(e) {
+                    e.preventDefault();
+
+                    // Валидация
+                    const title = document.getElementById('title').value;
+                    const description = document.getElementById('description').value;
+
+                    if (!title.trim() || !description.trim()) {
+                        alert('Пожалуйста, заполните обязательные поля');
+                        return;
+                    }
+
+                    if (description.length > 5000) {
+                        alert('Описание слишком длинное (максимум 5000 символов)');
+                        return;
+                    }
+
+                    // Здесь будет AJAX запрос для сохранения
+                    console.log('Форма вакансии отправлена');
+                    alert('Вакансия успешно создана!');
+
+                    // Сброс формы
+                    this.reset();
+                    if (charCount) charCount.textContent = '0';
+                    hideVacancyForm();
+
+                    // В реальном приложении здесь будет обновление списка вакансий
+                });
+            }
+
+            // Действия с карточками вакансий
+            document.querySelectorAll('.vacancy-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (!e.target.closest('.btn-action')) {
+                        const vacancyId = this.getAttribute('data-id');
+                        console.log('Просмотр вакансии:', vacancyId);
+                        // В реальном приложении переход на страницу вакансии
+                    }
+                });
+            });
+
+            // Кнопки действий на карточках вакансий
+            document.querySelectorAll('.vacancy-card .btn-action').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const vacancyId = this.closest('.vacancy-card')?.getAttribute('data-id');
+                    const action = this.classList.contains('btn-edit') ? 'edit' :
+                                  this.classList.contains('btn-view') ? 'view' :
+                                  this.classList.contains('btn-applications') ? 'applications' :
+                                  this.classList.contains('btn-pause') ? 'pause' :
+                                  this.classList.contains('btn-activate') ? 'activate' : '';
+
+                    console.log('Действие:', action, 'для вакансии:', vacancyId);
+
+                    // В реальном приложении соответствующие действия
+                    switch(action) {
+                        case 'edit':
+                            alert('Редактирование вакансии ' + vacancyId);
+                            break;
+                        case 'view':
+                            alert('Просмотр вакансии ' + vacancyId);
+                            break;
+                        case 'applications':
+                            alert('Просмотр откликов на вакансию ' + vacancyId);
+                            break;
+                        case 'pause':
+                            if (confirm('Приостановить вакансию?')) {
+                                alert('Вакансия приостановлена');
+                            }
+                            break;
+                        case 'activate':
+                            if (confirm('Активировать вакансию?')) {
+                                alert('Вакансия активирована');
+                            }
+                            break;
+                    }
+                });
+            });
+
+            // Анимация появления элементов
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Анимируем карточки
+            document.querySelectorAll('.vacancy-card, .sidebar-action-card').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>

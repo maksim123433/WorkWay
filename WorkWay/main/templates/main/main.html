@@ -1,0 +1,141 @@
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkWay - Поиск работы</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Градиентные волны -->
+    <div class="gradient-wave wave-1"></div>
+    <div class="gradient-wave wave-2"></div>
+    <div class="gradient-wave wave-3"></div>
+
+    <div class="container">
+        <!-- Шапка сайта -->
+        <header>
+            <div class="logo-container">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1><span class="logo-highlight">Work</span>Way</h1>
+                        <p class="tagline">Ваш путь к карьере мечты</p>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-section">
+                <a href="{% url 'profile'%}" class="profile-btn">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Профиль</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Основной контент -->
+        <main>
+            <div class="hero">
+                <div class="hero-header">
+                    <h2 class="hero-title">
+                        Найди <span class="highlight">работу</span> или
+                        <span class="highlight">сотрудника</span> мечты
+                    </h2>
+                    <p class="hero-subtitle">
+                        Современная платформа для поиска работы и подбора персонала
+                    </p>
+                </div>
+
+                <div class="hero-image-container">
+                    <div class="image-left">
+                        <div class="image-overlay">
+                            <h3>Для работодателей</h3>
+                            <p>Найди лучших специалистов</p>
+                        </div>
+                    </div>
+                    <div class="vertical-line">
+                        <div class="line-glow"></div>
+                    </div>
+                    <div class="image-right">
+                        <div class="image-overlay">
+                            <h3>Для соискателей</h3>
+                            <p>Найди идеальную работу</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <a href="{% url 'employer' %}" class="action-btn employer-btn">
+                        <div class="btn-icon">
+                            <i class="fas fa-briefcase"></i>
+                            <div class="icon-glow"></div>
+                        </div>
+                        <div class="btn-text">
+                            <h3>Работодателям</h3>
+                            <p>Найдите идеального сотрудника для вашей компании</p>
+                        </div>
+                        <div class="btn-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </a>
+
+                    <a href="{% url 'job_seeker' %}" class="action-btn employee-btn">
+                        <div class="btn-icon">
+                            <i class="fas fa-users"></i>
+                            <div class="icon-glow"></div>
+                        </div>
+                        <div class="btn-text">
+                            <h3>Соискателям</h3>
+                            <p>Найдите работу, которая соответствует вашим навыкам</p>
+                        </div>
+                        <div class="btn-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="features">
+                <div class="section-header">
+                    <h2>Наши преимущества</h2>
+                    <p>Всё, что нужно для успешного поиска работы или сотрудников</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <i class="fas fa-search"></i>
+                            <div class="icon-bg"></div>
+                        </div>
+                        <h3>Умный поиск</h3>
+                        <p>Искусственный интеллект подбирает вакансии, идеально соответствующие вашему опыту и ожиданиям</p>
+                        <div class="feature-line"></div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <i class="fas fa-handshake"></i>
+                            <div class="icon-bg"></div>
+                        </div>
+                        <h3>Прямой контакт</h3>
+                        <p>Общайтесь напрямую с работодателями без посредников и лишних комиссий</p>
+                        <div class="feature-line"></div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                            <div class="icon-bg"></div>
+                        </div>
+                        <h3>Карьерный рост</h3>
+                        <p>Персональные рекомендации и план развития для достижения ваших карьерных целей</p>
+                        <div class="feature-line"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

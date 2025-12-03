@@ -1,0 +1,250 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkWay - Ваш путь к карьере мечты</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Градиентные волны -->
+    <div class="gradient-wave wave-1"></div>
+    <div class="gradient-wave wave-2"></div>
+    <div class="gradient-wave wave-3"></div>
+
+    <div class="container">
+        <!-- Главный заголовок -->
+        <header class="main-header">
+            <div class="top-title">
+                <span class="site-name">
+                    WorkWay
+                </span>
+                <span class="pulse-dot"></span>
+                <span class="site-slogan">
+                    Карьера начинается здесь
+                </span>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="welcome-section">
+                <h2 class="welcome-title">Добро пожаловать!</h2>
+                <p class="welcome-subtitle">Выберите действие чтобы продолжить</p>
+            </div>
+
+            <div class="auth-tabs">
+                <div class="tabs-header">
+                    <button class="tab-btn active" data-tab="login">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Войти</span>
+                    </button>
+                    <button class="tab-btn" data-tab="register">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Зарегистрироваться</span>
+                    </button>
+                </div>
+
+                <!-- Форма входа -->
+                <div id="login-form" class="tab-content active">
+                    <div class="form-header">
+                        <h3><i class="fas fa-key"></i> Вход в систему</h3>
+                        <p>Войдите в свой аккаунт, чтобы продолжить</p>
+                    </div>
+                    <form id="loginForm">
+                        <div class="form-group floating-label">
+                            <input type="email" id="loginEmail" required placeholder=" ">
+                            <label for="loginEmail"><i class="fas fa-envelope"></i> Электронная почта</label>
+                            <div class="input-underline"></div>
+                        </div>
+                        <div class="form-group floating-label">
+                            <input type="password" id="loginPassword" required placeholder=" ">
+                            <label for="loginPassword"><i class="fas fa-lock"></i> Пароль</label>
+                            <div class="input-underline"></div>
+                            <button type="button" class="password-toggle" tabindex="-1">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="form-options">
+                            <label class="checkbox">
+                                <input type="checkbox" id="rememberMe">
+                                <span class="checkmark"></span>
+                                <span>Запомнить меня</span>
+                            </label>
+                            <a href="#" class="forgot-password">Забыли пароль?</a>
+                        </div>
+                        <button type="submit" class="btn-primary btn-gradient">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Войти в систему</span>
+                            <div class="btn-glow"></div>
+                        </button>
+                    </form>
+                    <div class="divider">
+                        <span>или</span>
+                    </div>
+                    <p class="switch-text">
+                        Ещё нет аккаунта?
+                        <a href="#" class="switch-to-register link-animated">
+                            <span>Создать аккаунт</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </p>
+                </div>
+
+                <!-- Форма выбора типа регистрации -->
+                <div id="register-form" class="tab-content">
+                    <div class="form-header">
+                        <h3><i class="fas fa-user-plus"></i> Регистрация</h3>
+                        <p>Выберите тип аккаунта для создания профиля</p>
+                    </div>
+
+                    <div class="register-choice">
+                        <div class="choice-header">
+                            <p class="choice-subtitle">Регистрация отличается для соискателей и работодателей</p>
+                        </div>
+
+                        <div class="choice-cards">
+                            <div class="choice-card" data-type="employee">
+                                <div class="choice-icon">
+                                    <i class="fas fa-user-tie"></i>
+                                    <div class="icon-ring"></div>
+                                </div>
+                                <h4>Соискатель</h4>
+                                <p class="choice-description">Ищу интересную работу и карьерные возможности</p>
+                                <ul class="choice-features">
+                                    <li><i class="fas fa-check-circle"></i> Создание профессионального резюме</li>
+                                    <li><i class="fas fa-check-circle"></i> Доступ к тысячам вакансий</li>
+                                    <li><i class="fas fa-check-circle"></i> Умные рекомендации</li>
+                                    <li><i class="fas fa-check-circle"></i> Отслеживание откликов</li>
+                                </ul>
+                                <button class="btn-choice btn-gradient" data-type="employee">
+                                    <i class="fas fa-arrow-right"></i>
+                                    <span>Начать поиск работы</span>
+                                </button>
+                            </div>
+
+                            <div class="choice-card" data-type="employer">
+                                <div class="choice-icon">
+                                    <i class="fas fa-briefcase"></i>
+                                    <div class="icon-ring"></div>
+                                </div>
+                                <h4>Работодатель</h4>
+                                <p class="choice-description">Ищу профессиональных сотрудников для команды</p>
+                                <ul class="choice-features">
+                                    <li><i class="fas fa-check-circle"></i> Размещение вакансий</li>
+                                    <li><i class="fas fa-check-circle"></i> Поиск по базе резюме</li>
+                                    <li><i class="fas fa-check-circle"></i> AI-подбор кандидатов</li>
+                                    <li><i class="fas fa-check-circle"></i> Аналитика подбора</li>
+                                </ul>
+                                <button class="btn-choice btn-gradient" data-type="employer">
+                                    <i class="fas fa-arrow-right"></i>
+                                    <span>Найти сотрудников</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <p class="switch-text">
+                            Уже есть аккаунт?
+                            <a href="#" class="switch-to-login link-animated">
+                                <i class="fas fa-sign-in-alt"></i>
+                                <span>Войти в систему</span>
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="features-section">
+                <h3 class="section-title">Почему выбирают WorkWay</h3>
+                <p class="section-subtitle">Современная платформа с уникальными возможностями</p>
+
+                <div class="features">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h4>Умный поиск</h4>
+                        <p>Искусственный интеллект анализирует ваши предпочтения</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4>Безопасность</h4>
+                        <p>Все данные защищены современными технологиями</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h4>Скорость</h4>
+                        <p>Находите работу или сотрудников быстро</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h4>Прямой контакт</h4>
+                        <p>Общайтесь напрямую без посредников</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-content">
+                <p>&copy; 2024 WorkWay. Все права защищены.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{% static 'js/script.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const siteName = document.querySelector('.site-name');
+            const pulseDot = document.querySelector('.pulse-dot');
+
+            // Эффект при наведении на название
+            siteName.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.05)';
+            });
+
+            siteName.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+
+            // Клик по пульсирующей точке
+            if (pulseDot) {
+                pulseDot.addEventListener('click', function() {
+                    this.style.animation = 'none';
+                    setTimeout(() => {
+                        this.style.animation = 'pulse 2s ease-in-out infinite';
+                    }, 100);
+
+                    const ripple = document.createElement('div');
+                    ripple.style.cssText = `
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        width: 50px;
+                        height: 50px;
+                        background: rgba(16, 185, 129, 0.3);
+                        border-radius: 50%;
+                        animation: rippleEffect 1s ease-out;
+                        pointer-events: none;
+                        z-index: 1;
+                    `;
+                    this.parentElement.appendChild(ripple);
+
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 1000);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
