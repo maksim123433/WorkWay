@@ -369,7 +369,7 @@
                                 <i class="fas fa-heading"></i>
                                 Название должности *
                             </label>
-                            <input type="text" id="title" name="title" required
+                            <input type="text" id="title" name="title" class="form-input" required
                                    placeholder="Например: Python разработчик">
                         </div>
 
@@ -378,7 +378,7 @@
                                 <i class="fas fa-tag"></i>
                                 Категория *
                             </label>
-                            <select id="category" name="category" required>
+                            <select id="category" name="category" class="form-select" required>
                                 <option value="">Выберите категорию</option>
                                 <option value="it">IT и программирование</option>
                                 <option value="design">Дизайн и творчество</option>
@@ -397,7 +397,7 @@
                                 <i class="fas fa-map-marker-alt"></i>
                                 Местоположение *
                             </label>
-                            <input type="text" id="location" name="location" required
+                            <input type="text" id="location" name="location" class="form-input" required
                                    placeholder="Например: Москва, удалённо">
                         </div>
 
@@ -406,7 +406,7 @@
                                 <i class="fas fa-briefcase"></i>
                                 Тип занятости *
                             </label>
-                            <select id="employment_type" name="employment_type" required>
+                            <select id="employment_type" name="employment_type" class="form-select" required>
                                 <option value="">Выберите тип</option>
                                 <option value="full">Полная занятость</option>
                                 <option value="part">Частичная занятость</option>
@@ -423,7 +423,7 @@
                                 <i class="fas fa-money-bill-wave"></i>
                                 Зарплата (от)
                             </label>
-                            <input type="number" id="salary_min" name="salary_min"
+                            <input type="number" id="salary_min" name="salary_min" class="form-input"
                                    placeholder="Минимальная зарплата">
                         </div>
 
@@ -432,7 +432,7 @@
                                 <i class="fas fa-money-bill-wave"></i>
                                 Зарплата (до)
                             </label>
-                            <input type="number" id="salary_max" name="salary_max"
+                            <input type="number" id="salary_max" name="salary_max" class="form-input"
                                    placeholder="Максимальная зарплата">
                         </div>
 
@@ -441,7 +441,7 @@
                                 <i class="fas fa-ruble-sign"></i>
                                 Валюта
                             </label>
-                            <select id="currency" name="currency">
+                            <select id="currency" name="currency" class="form-select">
                                 <option value="RUB">₽ Рубли</option>
                                 <option value="USD">$ Доллары</option>
                                 <option value="EUR">€ Евро</option>
@@ -454,7 +454,7 @@
                             <i class="fas fa-file-alt"></i>
                             Описание вакансии *
                         </label>
-                        <textarea id="description" name="description" rows="8" required
+                        <textarea id="description" name="description" class="form-textarea" rows="8" required
                                   placeholder="Опишите должностные обязанности, требования к кандидату, условия работы..."></textarea>
                         <div class="char-counter">
                             <span id="charCount">0</span>/5000 символов
@@ -466,7 +466,7 @@
                             <i class="fas fa-list-check"></i>
                             Требования к кандидату
                         </label>
-                        <textarea id="requirements" name="requirements" rows="4"
+                        <textarea id="requirements" name="requirements" class="form-textarea" rows="4"
                                   placeholder="Опыт работы, навыки, образование..."></textarea>
                     </div>
 
@@ -475,7 +475,7 @@
                             <i class="fas fa-gift"></i>
                             Мы предлагаем
                         </label>
-                        <textarea id="benefits" name="benefits" rows="4"
+                        <textarea id="benefits" name="benefits" class="form-textarea" rows="4"
                                   placeholder="Условия работы, бонусы, льготы..."></textarea>
                     </div>
 
@@ -485,7 +485,7 @@
                                 <i class="fas fa-chart-line"></i>
                                 Требуемый опыт
                             </label>
-                            <select id="experience" name="experience">
+                            <select id="experience" name="experience" class="form-select">
                                 <option value="">Не имеет значения</option>
                                 <option value="no">Без опыта</option>
                                 <option value="1-3">1-3 года</option>
@@ -499,7 +499,7 @@
                                 <i class="fas fa-graduation-cap"></i>
                                 Образование
                             </label>
-                            <select id="education" name="education">
+                            <select id="education" name="education" class="form-select">
                                 <option value="">Не имеет значения</option>
                                 <option value="secondary">Среднее</option>
                                 <option value="specialized">Среднее специальное</option>
@@ -522,8 +522,6 @@
                     </div>
                 </form>
             </section>
-        </main>
-    </div>
 
     <script src="{% static 'js/employer.js' %}"></script>
     <script>

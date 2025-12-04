@@ -1,0 +1,426 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkWay - Регистрация</title>
+    <link rel="stylesheet" href="{% static 'css/register.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Градиентные волны -->
+    <div class="gradient-wave wave-1"></div>
+    <div class="gradient-wave wave-2"></div>
+    <div class="gradient-wave wave-3"></div>
+
+    <!-- Надпись сверху -->
+    <div class="top-header">
+        <div class="top-title">
+            <span class="site-name">
+                WorkWay
+            </span>
+            <span class="pulse-dot"></span>
+            <span class="site-slogan">
+                Создание аккаунта
+            </span>
+        </div>
+    </div>
+
+    <div class="container">
+        <header class="main-header">
+            <div class="logo-container">
+                <a href="" class="logo-link">
+                    <div class="logo-wrapper">
+                        <div class="logo-icon">
+                            <i class="fas fa-route"></i>
+                        </div>
+                        <div class="logo-text">
+                            <h1 class="logo-title">
+                                <span class="logo-highlight">Work</span><span class="logo-second">Way</span>
+                            </h1>
+                            <p class="logo-subtitle">Регистрация нового аккаунта</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="header-actions">
+                <a href="" cаlass="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>На главную</span>
+                </a>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="registration-container">
+                <div class="registration-header">
+                    <h2><i class="fas fa-user-plus"></i> Создание аккаунта</h2>
+                    <p class="registration-subtitle">Заполните информацию для регистрации</p>
+                </div>
+
+                <form id="registrationForm" class="registration-form" method="POST" action="">
+                    {% csrf_token %}
+
+                    <!-- Персональная информация -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-user-circle"></i> Персональная информация</h3>
+                            <p>Укажите ваши основные данные</p>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group floating-input">
+                                <input type="text" id="first_name" name="first_name" required
+                                       placeholder="Введите ваше имя">
+                                <label for="first_name">
+                                    <i class="fas fa-user"></i>
+                                    <span>Имя *</span>
+                                </label>
+                                <div class="input-underline"></div>
+                                <div class="validation-message"></div>
+                            </div>
+
+                            <div class="form-group floating-input">
+                                <input type="text" id="last_name" name="last_name" required
+                                       placeholder="Введите вашу фамилию">
+                                <label for="last_name">
+                                    <i class="fas fa-user"></i>
+                                    <span>Фамилия *</span>
+                                </label>
+                                <div class="input-underline"></div>
+                                <div class="validation-message"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Контактная информация -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-envelope"></i> Контактная информация</h3>
+                            <p>Данные для связи и входа в систему</p>
+                        </div>
+
+                        <div class="form-group floating-input">
+                            <input type="email" id="email" name="email" required
+                                   placeholder="example@email.com">
+                            <label for="email">
+                                <i class="fas fa-at"></i>
+                                <span>Электронная почта *</span>
+                            </label>
+                            <div class="input-underline"></div>
+                            <div class="validation-message"></div>
+                        </div>
+
+                        <div class="form-group floating-input">
+                            <input type="email" id="confirm_email" name="confirm_email" required
+                                   placeholder="Повторите email">
+                            <label for="confirm_email">
+                                <i class="fas fa-envelope"></i>
+                                <span>Подтверждение email *</span>
+                            </label>
+                            <div class="input-underline"></div>
+                            <div class="validation-message"></div>
+                        </div>
+                    </div>
+
+                    <!-- Пароль -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-lock"></i> Безопасность аккаунта</h3>
+                            <p>Создайте надежный пароль</p>
+                        </div>
+
+                        <div class="form-group floating-input">
+                            <div class="password-wrapper">
+                                <input type="password" id="password" name="password" required
+                                       placeholder="Создайте пароль">
+                                <button type="button" class="toggle-password" tabindex="-1">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <label for="password">
+                                <i class="fas fa-key"></i>
+                                <span>Пароль *</span>
+                            </label>
+                            <div class="input-underline"></div>
+                            <div class="password-strength">
+                                <div class="strength-bar">
+                                    <div class="strength-fill" data-strength="0"></div>
+                                </div>
+                                <div class="strength-text">
+                                    <i class="fas fa-exclamation-circle"></i>
+                                    <span>Введите пароль</span>
+                                </div>
+                            </div>
+                            <div class="validation-message"></div>
+                        </div>
+
+                        <div class="form-group floating-input">
+                            <div class="password-wrapper">
+                                <input type="password" id="confirm_password" name="confirm_password" required
+                                       placeholder="Повторите пароль">
+                                <button type="button" class="toggle-password" tabindex="-1">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+                            <label for="confirm_password">
+                                <i class="fas fa-key"></i>
+                                <span>Подтверждение пароля *</span>
+                            </label>
+                            <div class="input-underline"></div>
+                            <div class="validation-message"></div>
+                        </div>
+                    </div>
+
+                    <!-- Выбор роли -->
+                    <div class="form-section">
+                        <div class="section-header">
+                            <h3><i class="fas fa-user-tag"></i> Тип аккаунта</h3>
+                            <p>Выберите, как вы будете использовать платформу</p>
+                        </div>
+
+                        <div class="role-selection">
+                            <div class="role-options">
+                                <label class="role-option">
+                                    <input type="radio" name="user_type" value="job_seeker" required>
+                                    <div class="role-card">
+                                        <div class="role-icon">
+                                            <i class="fas fa-user-graduate"></i>
+                                        </div>
+                                        <div class="role-content">
+                                            <h4>Соискатель</h4>
+                                            <p>Ищу работу или стажировку</p>
+                                        </div>
+                                        <div class="role-check">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <label class="role-option">
+                                    <input type="radio" name="user_type" value="employer">
+                                    <div class="role-card">
+                                        <div class="role-icon">
+                                            <i class="fas fa-briefcase"></i>
+                                        </div>
+                                        <div class="role-content">
+                                            <h4>Работодатель</h4>
+                                            <p>Ищу сотрудников для компании</p>
+                                        </div>
+                                        <div class="role-check">
+                                            <i class="fas fa-check"></i>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Динамические поля для соискателя -->
+                    <div class="form-section job-seeker-fields" style="display: none;">
+                        <div class="section-header">
+                            <h3><i class="fas fa-file-alt"></i> Информация о резюме</h3>
+                            <p>Заполните информацию для вашего резюме</p>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group floating-input">
+                                <input type="text" id="position" name="position"
+                                       placeholder="Желаемая должность">
+                                <label for="position">
+                                    <i class="fas fa-briefcase"></i>
+                                    <span>Желаемая должность</span>
+                                </label>
+                                <div class="input-underline"></div>
+                            </div>
+
+                            <div class="form-group floating-input">
+                                <input type="text" id="experience" name="experience"
+                                       placeholder="Опыт работы (лет)">
+                                <label for="experience">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>Опыт работы</span>
+                                </label>
+                                <div class="input-underline"></div>
+                            </div>
+
+                            <div class="form-group floating-input">
+                                <input type="text" id="skills" name="skills"
+                                       placeholder="Ключевые навыки (через запятую)">
+                                <label for="skills">
+                                    <i class="fas fa-tools"></i>
+                                    <span>Ключевые навыки</span>
+                                </label>
+                                <div class="input-underline"></div>
+                            </div>
+
+                            <div class="form-group floating-input">
+                                <input type="text" id="education" name="education"
+                                       placeholder="Образование">
+                                <label for="education">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    <span>Образование</span>
+                                </label>
+                                <div class="input-underline"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="about"><i class="fas fa-user-edit"></i> О себе</label>
+                            <textarea id="about" name="about" rows="4"
+                                      placeholder="Расскажите о себе, своих целях и опыте..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Динамические поля для работодателя -->
+                    <div class="form-section employer-fields" style="display: none;">
+                        <div class="section-header">
+                            <h3><i class="fas fa-building"></i> Информация о компании</h3>
+                            <p>Заполните информацию о вашей компании</p>
+                        </div>
+
+                        <div class="form-grid">
+                            <div class="form-group floating-input">
+                                <input type="text" id="company_name" name="company_name"
+                                       placeholder="Название компании">
+                                <label for="company_name">
+                                    <i class="fas fa-building"></i>
+                                    <span>Название компании</span>
+                                </label>
+                                <div class="input-underline"></div>
+                            </div>
+
+                            <div class="form-group floating-input">
+                                <input type="text" id="company_position" name="company_position"
+                                       placeholder="Ваша должность">
+                                <label for="company_position">
+                                    <i class="fas fa-user-tie"></i>
+                                    <span>Ваша должность</span>
+                                </label>
+                                <div class="input-underline"></div>
+                            </div>
+
+                            <div class="form-group floating-input">
+                                <input type="text" id="industry" name="industry"
+                                       placeholder="Сфера деятельности">
+                                <label for="industry">
+                                    <i class="fas fa-industry"></i>
+                                    <span>Сфера деятельности</span>
+                                </label>
+                                <div class="input-underline"></div>
+                            </div>
+
+                            <div class="form-group floating-input">
+                                <input type="text" id="company_size" name="company_size"
+                                       placeholder="Количество сотрудников">
+                                <label for="company_size">
+                                    <i class="fas fa-users"></i>
+                                    <span>Размер компании</span>
+                                </label>
+                                <div class="input-underline"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="company_description"><i class="fas fa-file-alt"></i> О компании</label>
+                            <textarea id="company_description" name="company_description" rows="4"
+                                      placeholder="Расскажите о вашей компании, миссии и ценностях..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Соглашения -->
+                    <div class="form-section">
+                        <div class="agreement-item">
+                            <label class="checkbox agreement-checkbox">
+                                <input type="checkbox" id="terms" name="terms" required>
+                                <span class="checkmark"></span>
+                                <span class="agreement-text">
+                                    Я принимаю
+                                    <a href="#" class="agreement-link">Условия использования</a>
+                                    и
+                                    <a href="#" class="agreement-link">Политику конфиденциальности</a>
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="agreement-item">
+                            <label class="checkbox agreement-checkbox">
+                                <input type="checkbox" id="newsletter" name="newsletter">
+                                <span class="checkmark"></span>
+                                <span class="agreement-text">
+                                    Я хочу получать новости и специальные предложения от WorkWay
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Кнопки действий -->
+                    <div class="form-actions">
+                        <a href="" class="btn-secondary">
+                            <i class="fas fa-times"></i>
+                            <span>Отмена</span>
+                        </a>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Зарегистрироваться</span>
+                        </button>
+                    </div>
+
+                    <div class="login-link">
+                        <p>
+                            Уже есть аккаунт?
+                            <a href="" class="link">
+                                <i class="fas fa-sign-in-alt"></i>
+                                <span>Войти</span>
+                            </a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Преимущества регистрации -->
+            <div class="registration-benefits">
+                <h3><i class="fas fa-gift"></i> Преимущества регистрации</h3>
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4>Безопасность</h4>
+                        <p>Все ваши данные защищены современными технологиями шифрования</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h4>Быстрый доступ</h4>
+                        <p>Мгновенный доступ ко всем функциям платформы после регистрации</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h4>Поддержка 24/7</h4>
+                        <p>Круглосуточная поддержка для решения любых вопросов</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-content">
+                <p>&copy; 2024 WorkWay. Все права защищены.</p>
+                <div class="footer-links">
+                    <a href="#">Политика конфиденциальности</a>
+                    <a href="#">Условия использования</a>
+                    <a href="#">Помощь</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{% static 'js/registr.js' %}"></script>
+</body>
+</html>

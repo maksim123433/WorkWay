@@ -24,5 +24,6 @@ urlpatterns = [
     path("",include("job_seeker.urls")),
     path("", include("employer.urls")),
     path("",include("profileUser.urls")),
+    path("",include("registration.urls")),
     path("admin/", admin.site.urls),
 ]

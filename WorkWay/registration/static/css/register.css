@@ -1,0 +1,1083 @@
+/* Стили для страницы регистрации */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg,
+        #f8fafc 0%,
+        #f1f5f9 25%,
+        #e2e8f0 50%,
+        #f1f5f9 75%,
+        #f8fafc 100%);
+    color: #1e293b;
+    line-height: 1.6;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Градиентные волны */
+.gradient-wave {
+    position: fixed;
+    height: 200px;
+    width: 100%;
+    z-index: -1;
+    opacity: 0.15;
+}
+
+.wave-1 {
+    top: 0;
+    background: linear-gradient(180deg, #93c5fd, transparent);
+    animation: waveMove 25s linear infinite;
+}
+
+.wave-2 {
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(90deg, transparent, #c7d2fe, transparent);
+    animation: waveMove 30s linear infinite reverse;
+    height: 150px;
+}
+
+.wave-3 {
+    bottom: 0;
+    background: linear-gradient(0deg, #86efac, transparent);
+    animation: waveMove 20s linear infinite;
+    opacity: 0.1;
+}
+
+@keyframes waveMove {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Надпись сверху */
+.top-header {
+    background: linear-gradient(135deg,
+        rgba(59, 130, 246, 0.95) 0%,
+        rgba(16, 185, 129, 0.95) 100%);
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0 0 25px 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.top-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M50 50v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM50 10V6h-2v4h-4v2h4v4h2v-4h4v-2h-4zM10 50v-4H8v4H4v2h4v4h2v-4h4v-2h-4zM10 10V6H8v4H4v2h4v4h2v-4h4v-2h-4z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.top-title {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.site-name {
+    font-size: 2.5rem;
+    font-weight: 900;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg,
+        #ffffff 0%,
+        #c7d2fe 50%,
+        #ffffff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    animation: glow 3s ease-in-out infinite alternate;
+}
+
+.site-slogan {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    font-weight: 300;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    position: relative;
+    padding: 0 15px;
+}
+
+.site-slogan::before,
+.site-slogan::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 30px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.site-slogan::before {
+    left: -40px;
+}
+
+.site-slogan::after {
+    right: -40px;
+}
+
+.pulse-dot {
+    width: 12px;
+    height: 12px;
+    background: #10b981;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 10px;
+    animation: pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.5);
+}
+
+@keyframes glow {
+    0% {
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    }
+    100% {
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.3);
+        opacity: 0.7;
+    }
+}
+
+/* Шапка страницы */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 0;
+    position: relative;
+}
+
+.logo-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.logo-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #3b82f6, #10b981);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -1px;
+    margin-bottom: 5px;
+}
+
+.logo-highlight {
+    background: linear-gradient(135deg, #3b82f6, #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.logo-second {
+    color: #0f172a;
+}
+
+.logo-subtitle {
+    color: #64748b;
+    font-size: 0.95rem;
+    font-weight: 300;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #ffffff, #f8fafc);
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.back-btn:hover {
+    background: linear-gradient(135deg, #f8fafc, #ffffff);
+    border-color: #cbd5e1;
+    transform: translateX(-3px);
+}
+
+/* Основной контент */
+.main-content {
+    padding: 20px 0 60px;
+}
+
+/* Контейнер регистрации */
+.registration-container {
+    background: white;
+    border-radius: 25px;
+    padding: 40px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    margin-bottom: 40px;
+}
+
+.registration-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.registration-header h2 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.registration-header h2 i {
+    color: #3b82f6;
+}
+
+.registration-subtitle {
+    color: #64748b;
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Секции формы */
+.form-section {
+    margin-bottom: 40px;
+    padding: 30px;
+    background: #f8fafc;
+    border-radius: 20px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.form-section:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.section-header {
+    margin-bottom: 30px;
+}
+
+.section-header h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.section-header h3 i {
+    color: #3b82f6;
+}
+
+.section-header p {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+/* Сетка формы */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+/* Группа формы */
+.form-group {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    color: #475569;
+    font-weight: 500;
+}
+
+.form-group label i {
+    color: #3b82f6;
+}
+
+.form-group textarea {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    resize: vertical;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+}
+
+.form-group textarea:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.floating-input {
+    position: relative;
+}
+
+.floating-input input {
+    width: 100%;
+    padding: 18px 15px 8px 15px;
+    font-size: 1.1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    background: white;
+    color: #1e293b;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.floating-input input:focus {
+    border-color: #3b82f6;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    padding-top: 22px;
+    padding-bottom: 12px;
+}
+
+.floating-input input:focus + label,
+.floating-input input:not(:placeholder-shown) + label {
+    transform: translateY(-28px) scale(0.85);
+    color: #3b82f6;
+}
+
+.floating-input label {
+    position: absolute;
+    top: 18px;
+    left: 15px;
+    color: #94a3b8;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.floating-input label i {
+    font-size: 1rem;
+}
+
+.input-underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, #3b82f6, #10b981);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.floating-input input:focus ~ .input-underline {
+    transform: scaleX(1);
+}
+
+.validation-message {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    min-height: 20px;
+    color: #ef4444;
+}
+
+/* Поле с паролем */
+.password-wrapper {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 5px;
+    transition: color 0.3s ease;
+}
+
+.toggle-password:hover {
+    color: #3b82f6;
+}
+
+/* Сложность пароля */
+.password-strength {
+    margin-top: 15px;
+}
+
+.strength-bar {
+    width: 100%;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.strength-fill {
+    height: 100%;
+    width: 0%;
+    background: #ef4444;
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.strength-fill[data-strength="1"] {
+    width: 25%;
+    background: #ef4444;
+}
+
+.strength-fill[data-strength="2"] {
+    width: 50%;
+    background: #f59e0b;
+}
+
+.strength-fill[data-strength="3"] {
+    width: 75%;
+    background: #3b82f6;
+}
+
+.strength-fill[data-strength="4"] {
+    width: 100%;
+    background: #10b981;
+}
+
+.strength-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.strength-text i {
+    color: #ef4444;
+}
+
+.strength-fill[data-strength="1"] ~ .strength-text i { color: #ef4444; }
+.strength-fill[data-strength="2"] ~ .strength-text i { color: #f59e0b; }
+.strength-fill[data-strength="3"] ~ .strength-text i { color: #3b82f6; }
+.strength-fill[data-strength="4"] ~ .strength-text i { color: #10b981; }
+
+/* Выбор роли */
+.role-selection {
+    margin-top: 20px;
+}
+
+.role-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.role-option {
+    display: block;
+    cursor: pointer;
+}
+
+.role-option input {
+    display: none;
+}
+
+.role-card {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.role-option input:checked + .role-card {
+    border-color: #3b82f6;
+    background: linear-gradient(135deg, #eff6ff, #ffffff);
+    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
+}
+
+.role-option input:checked + .role-card .role-check {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.role-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #3b82f6, #10b981);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.role-content {
+    flex: 1;
+}
+
+.role-content h4 {
+    font-size: 1.3rem;
+    color: #1e293b;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.role-content p {
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.role-check {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    width: 30px;
+    height: 30px;
+    background: #10b981;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.8rem;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+}
+
+/* Соглашения */
+.agreements {
+    background: transparent;
+    border: 2px dashed #e2e8f0;
+    padding: 25px;
+}
+
+.agreement-item {
+    margin-bottom: 20px;
+}
+
+.agreement-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    cursor: pointer;
+}
+
+.agreement-text {
+    color: #475569;
+    line-height: 1.5;
+}
+
+.agreement-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.agreement-link:hover {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
+/* Чекбоксы */
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: #475569;
+}
+
+.checkbox input {
+    display: none;
+}
+
+.checkmark {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #cbd5e1;
+    border-radius: 6px;
+    position: relative;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.checkbox input:checked ~ .checkmark {
+    background: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.checkbox input:checked ~ .checkmark::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 14px;
+}
+
+/* Кнопки действий */
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin: 40px 0 30px;
+}
+
+.btn-primary, .btn-secondary {
+    flex: 1;
+    padding: 18px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    border: none;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6, #10b981);
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.7s ease;
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: white;
+    color: #475569;
+    border: 2px solid #e2e8f0;
+}
+
+.btn-secondary:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Ссылка на вход */
+.login-link {
+    text-align: center;
+    padding-top: 25px;
+    border-top: 1px solid #e2e8f0;
+    margin-top: 20px;
+}
+
+.login-link p {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+.login-link .link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+.login-link .link:hover {
+    color: #2563eb;
+    gap: 8px;
+}
+
+/* Преимущества регистрации */
+.registration-benefits {
+    background: white;
+    border-radius: 25px;
+    padding: 40px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    margin-bottom: 40px;
+}
+
+.registration-benefits h3 {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 40px;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.registration-benefits h3 i {
+    color: #3b82f6;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.benefit-card {
+    background: linear-gradient(135deg, #f8fafc, #ffffff);
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.benefit-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: #3b82f6;
+}
+
+.benefit-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #3b82f6, #10b981);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 1.8rem;
+    color: white;
+}
+
+.benefit-card h4 {
+    font-size: 1.3rem;
+    color: #1e293b;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.benefit-card p {
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Футер */
+footer {
+    padding: 30px 0;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.footer-links {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.footer-links a {
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #3b82f6;
+}
+
+/* Анимации */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.registration-container,
+.registration-benefits {
+    animation: slideIn 0.6s ease-out;
+}
+
+.form-section {
+    animation: slideIn 0.4s ease-out forwards;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 20px;
+    }
+
+    .top-header {
+        border-radius: 0 0 20px 20px;
+    }
+
+    .site-name {
+        font-size: 2rem;
+    }
+
+    .site-slogan {
+        font-size: 1rem;
+        padding: 0 10px;
+    }
+
+    .site-slogan::before,
+    .site-slogan::after {
+        width: 20px;
+    }
+
+    .site-slogan::before {
+        left: -30px;
+    }
+
+    .site-slogan::after {
+        right: -30px;
+    }
+
+    .main-header {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px 0;
+    }
+
+    .logo-wrapper {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .registration-container {
+        padding: 25px;
+    }
+
+    .registration-header h2 {
+        font-size: 1.8rem;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .form-section {
+        padding: 20px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .role-options {
+        grid-template-columns: 1fr;
+    }
+
+    .floating-input input {
+        padding: 18px 15px 8px 15px;
+        font-size: 1rem;
+    }
+
+    .floating-input label {
+        font-size: 1rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-primary, .btn-secondary {
+        padding: 16px;
+        font-size: 1rem;
+    }
+
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .registration-benefits {
+        padding: 25px;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 15px;
+    }
+
+    .registration-container {
+        padding: 20px;
+    }
+
+    .registration-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .registration-subtitle {
+        font-size: 0.95rem;
+    }
+
+    .section-header h3 {
+        font-size: 1.3rem;
+    }
+
+    .form-section {
+        padding: 15px;
+    }
+
+    .role-card {
+        padding: 20px;
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .role-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.3rem;
+    }
+
+    .role-content h4 {
+        font-size: 1.1rem;
+    }
+
+    .role-content p {
+        font-size: 0.8rem;
+    }
+
+    .benefit-card {
+        padding: 20px;
+    }
+}

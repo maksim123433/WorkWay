@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "employer",
     "job_seeker",
     "main",
+    "registration",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

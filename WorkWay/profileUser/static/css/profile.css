@@ -1,0 +1,812 @@
+/* Основные стили для страницы входа */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg,
+        #f8fafc 0%,
+        #f1f5f9 25%,
+        #e2e8f0 50%,
+        #f1f5f9 75%,
+        #f8fafc 100%);
+    color: #1e293b;
+    line-height: 1.6;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Градиентные волны */
+.gradient-wave {
+    position: fixed;
+    height: 200px;
+    width: 100%;
+    z-index: -1;
+    opacity: 0.15;
+}
+
+.wave-1 {
+    top: 0;
+    background: linear-gradient(180deg, #93c5fd, transparent);
+    animation: waveMove 25s linear infinite;
+}
+
+.wave-2 {
+    top: 50%;
+    transform: translateY(-50%);
+    background: linear-gradient(90deg, transparent, #c7d2fe, transparent);
+    animation: waveMove 30s linear infinite reverse;
+    height: 150px;
+}
+
+.wave-3 {
+    bottom: 0;
+    background: linear-gradient(0deg, #86efac, transparent);
+    animation: waveMove 20s linear infinite;
+    opacity: 0.1;
+}
+
+@keyframes waveMove {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Шапка страницы */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 0;
+    position: relative;
+}
+
+.logo-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.logo-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #3b82f6, #10b981);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -1px;
+    margin-bottom: 5px;
+}
+
+.logo-highlight {
+    background: linear-gradient(135deg, #3b82f6, #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.logo-second {
+    color: #0f172a;
+}
+
+.logo-subtitle {
+    color: #64748b;
+    font-size: 0.95rem;
+    font-weight: 300;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #ffffff, #f8fafc);
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.back-btn:hover {
+    background: linear-gradient(135deg, #f8fafc, #ffffff);
+    border-color: #cbd5e1;
+    transform: translateX(-3px);
+}
+
+/* Основной контент */
+.main-content {
+    padding: 20px 0 60px;
+}
+
+.welcome-section {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.welcome-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    background: linear-gradient(135deg, #3b82f6, #10b981);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.welcome-subtitle {
+    color: #64748b;
+    font-size: 1.1rem;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Карточка авторизации */
+.auth-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.auth-card {
+    background: white;
+    border-radius: 25px;
+    padding: 40px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(226, 232, 240, 0.6);
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.form-header h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.form-header h3 i {
+    color: #3b82f6;
+}
+
+.form-header p {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+/* Форма */
+.form-group {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.floating-input input {
+    width: 100%;
+    padding: 18px 15px 8px 15px;
+    font-size: 1.1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    background: white;
+    color: #1e293b;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.floating-input input:focus {
+    border-color: #3b82f6;
+    background: white;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+    padding-top: 22px;
+    padding-bottom: 12px;
+}
+
+.floating-input input:focus + label,
+.floating-input input:not(:placeholder-shown) + label {
+    transform: translateY(-28px) scale(0.85);
+    color: #3b82f6;
+}
+
+.floating-input label {
+    position: absolute;
+    top: 18px;
+    left: 15px;
+    color: #94a3b8;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.floating-input label i {
+    font-size: 1rem;
+}
+
+.input-underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, #3b82f6, #10b981);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.floating-input input:focus ~ .input-underline {
+    transform: scaleX(1);
+}
+
+.input-hint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.input-hint i {
+    color: #3b82f6;
+}
+
+.validation-message {
+    margin-top: 8px;
+    font-size: 0.9rem;
+    min-height: 20px;
+    color: #ef4444;
+}
+
+/* Поле с паролем */
+.password-wrapper {
+    position: relative;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 5px;
+    transition: color 0.3s ease;
+}
+
+.toggle-password:hover {
+    color: #3b82f6;
+}
+
+/* Опции формы */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 25px 0;
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    color: #475569;
+}
+
+.checkbox input {
+    display: none;
+}
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #cbd5e1;
+    border-radius: 4px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.checkbox input:checked ~ .checkmark {
+    background: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.checkbox input:checked ~ .checkmark::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 12px;
+}
+
+.forgot-password {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
+.forgot-password i {
+    font-size: 0.9rem;
+}
+
+/* Кнопка входа */
+.btn-primary {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, #3b82f6, #10b981);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.7s ease;
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+}
+
+.btn-primary:active {
+    transform: translateY(-1px);
+}
+
+/* Сообщения */
+.messages {
+    margin-top: 20px;
+}
+
+.message {
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn 0.5s ease;
+}
+
+.message.error {
+    background: #fee2e2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.message.success {
+    background: #d1fae5;
+    color: #059669;
+    border: 1px solid #a7f3d0;
+}
+
+.message.warning {
+    background: #fef3c7;
+    color: #d97706;
+    border: 1px solid #fde68a;
+}
+
+.message.info {
+    background: #dbeafe;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Разделитель */
+.divider {
+    display: flex;
+    align-items: center;
+    margin: 30px 0;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e2e8f0;
+}
+
+.divider span {
+    padding: 0 20px;
+    background: white;
+}
+
+/* Социальный вход */
+.social-login {
+    margin-bottom: 30px;
+}
+
+.social-title {
+    text-align: center;
+    color: #64748b;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+}
+
+.social-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.social-btn {
+    padding: 15px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+.social-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.google-btn {
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+.google-btn:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+}
+
+.github-btn {
+    color: #1f2937;
+    border-color: #d1d5db;
+}
+
+.github-btn:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.linkedin-btn {
+    color: #2563eb;
+    border-color: #bfdbfe;
+}
+
+.linkedin-btn:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+}
+
+/* Переключение на регистрацию */
+.switch-auth {
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.switch-text {
+    color: #64748b;
+    font-size: 1rem;
+}
+
+.switch-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 600;
+    margin-left: 10px;
+    transition: all 0.3s ease;
+}
+
+.switch-link:hover {
+    color: #2563eb;
+    gap: 12px;
+}
+
+/* Преимущества */
+.features-section {
+    margin-top: 60px;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.section-title i {
+    color: #3b82f6;
+}
+
+.section-subtitle {
+    text-align: center;
+    color: #64748b;
+    font-size: 1.1rem;
+    margin-bottom: 40px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.benefit-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.benefit-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    border-color: #3b82f6;
+}
+
+.benefit-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #3b82f6, #10b981);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 1.8rem;
+    color: white;
+}
+
+.benefit-card h4 {
+    font-size: 1.3rem;
+    color: #1e293b;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.benefit-card p {
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Футер */
+footer {
+    padding: 30px 0;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.9rem;
+    border-top: 1px solid #e2e8f0;
+    margin-top: 60px;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.footer-links {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.footer-links a {
+    color: #64748b;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #3b82f6;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 20px;
+    }
+
+    .main-header {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px 0;
+    }
+
+    .logo-wrapper {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .auth-card {
+        padding: 25px;
+    }
+
+    .form-header h3 {
+        font-size: 1.5rem;
+    }
+
+    .social-buttons {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-links {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 0 15px;
+    }
+
+    .auth-card {
+        padding: 20px;
+    }
+
+    .welcome-title {
+        font-size: 2rem;
+    }
+
+    .welcome-subtitle {
+        font-size: 1rem;
+    }
+
+    .form-header h3 {
+        font-size: 1.3rem;
+    }
+
+    .floating-input input {
+        padding: 16px 15px 6px 15px;
+        font-size: 1rem;
+    }
+
+    .floating-input label {
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        padding: 16px;
+        font-size: 1rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+    }
+
+    .benefit-card {
+        padding: 20px;
+    }
+}
