@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const roleOptions = document.querySelectorAll('input[name="user_type"]');
     const jobSeekerFields = document.querySelector('.job-seeker-fields');
     const employerFields = document.querySelector('.employer-fields');
-    const passwordInput = document.getElementById('password');
-    const confirmPasswordInput = document.getElementById('confirm_password');
+    const passwordInput = document.getElementById('id_password1');  // ИЗМЕНЕНО
+    const confirmPasswordInput = document.getElementById('id_password2');  // ИЗМЕНЕНО
     const togglePasswordBtns = document.querySelectorAll('.toggle-password');
     const emailInput = document.getElementById('email');
     const confirmEmailInput = document.getElementById('confirm_email');
@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Элементы ролей найдены:', roleOptions.length);
     console.log('Поля соискателя:', jobSeekerFields);
     console.log('Поля работодателя:', employerFields);
+    console.log('Поле пароля 1:', passwordInput);
+    console.log('Поле пароля 2:', confirmPasswordInput);
 
     // Переключение видимости пароля
     togglePasswordBtns.forEach(btn => {
@@ -20,32 +22,45 @@ document.addEventListener('DOMContentLoaded', function() {
             const input = this.parentElement.querySelector('input');
             const icon = this.querySelector('i');
 
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
+            console.log('Toggle button clicked');
+            console.log('Input element:', input);
+            console.log('Icon element:', icon);
+
+            if (input && icon) {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
             } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+                console.error('Input или icon не найдены');
             }
         });
     });
 
     // Валидация email
     function validateEmail(email) {
+        if (!email) return false;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email.trim());
     }
 
     // Валидация пароля
     function validatePassword(password) {
+        if (!password) {
+            return {
+                length: false,
+                number: false
+            };
+        }
+
         const requirements = {
             length: password.length >= 8,
-            uppercase: /[A-ZА-Я]/.test(password),
-            lowercase: /[a-zа-я]/.test(password),
             number: /\d/.test(password),
-            special: /[!@#$%^&*(),.?":{}|<>]/.test(password)
         };
 
         return requirements;
@@ -55,6 +70,12 @@ document.addEventListener('DOMContentLoaded', function() {
     function updatePasswordStrength(password) {
         const strengthFill = document.querySelector('.strength-fill');
         const strengthText = document.querySelector('.strength-text span');
+
+        if (!strengthFill || !strengthText) {
+            console.warn('Элементы для отображения силы пароля не найдены');
+            return;
+        }
+
         const requirements = validatePassword(password);
 
         let strength = 0;
@@ -70,18 +91,21 @@ document.addEventListener('DOMContentLoaded', function() {
             const messages = [
                 'Введите пароль',
                 'Слабый пароль',
-                'Нормальный пароль',
-                'Хороший пароль',
                 'Отличный пароль'
             ];
-            strengthText.textContent = messages[strength];
+            strengthText.textContent = messages[strength] || messages[0];
         }
     }
 
     // Проверка совпадения email
     function checkEmailMatch() {
-        const email = emailInput.value.trim();
-        const confirmEmail = confirmEmailInput.value.trim();
+        if (!emailInput || !confirmEmailInput) {
+            console.warn('Поля email не найдены');
+            return;
+        }
+
+        const email = emailInput.value ? emailInput.value.trim() : '';
+        const confirmEmail = confirmEmailInput.value ? confirmEmailInput.value.trim() : '';
 
         if (!confirmEmail) return;
 
@@ -96,8 +120,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Проверка совпадения паролей
     function checkPasswordMatch() {
-        const password = passwordInput.value;
-        const confirmPassword = confirmPasswordInput.value;
+        if (!passwordInput || !confirmPasswordInput) {
+            console.warn('Поля паролей не найдены');
+            return;
+        }
+
+        const password = passwordInput.value || '';
+        const confirmPassword = confirmPasswordInput.value || '';
 
         if (!confirmPassword) return;
 
@@ -231,88 +260,91 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Обработка отправки формы
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
 
-        // Сбор данных
-        const formData = new FormData(this);
-        const data = {};
-        formData.forEach((value, key) => {
-            data[key] = value;
+            // Сбор данных
+            const formData = new FormData(this);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            console.log('Данные формы:', data);
+
+            // Валидация
+            const errors = [];
+
+            // Проверка имени и фамилии
+            if (!data.first_name || !/^[а-яА-ЯёЁa-zA-Z\s\-]+$/.test(data.first_name) || data.first_name.trim().length < 2) {
+                errors.push('Имя должно содержать минимум 2 буквы и только буквы');
+            }
+
+            if (!data.last_name || !/^[а-яА-ЯёЁa-zA-Z\s\-]+$/.test(data.last_name) || data.last_name.trim().length < 2) {
+                errors.push('Фамилия должна содержать минимум 2 буквы и только буквы');
+            }
+
+            // Проверка email
+            if (!validateEmail(data.email)) {
+                errors.push('Введите корректный email');
+            }
+
+            if (data.email !== data.confirm_email) {
+                errors.push('Email не совпадают');
+            }
+
+            // Проверка пароля
+            const passwordRequirements = validatePassword(data.password1);  // ИЗМЕНЕНО
+            const isPasswordStrong = Object.values(passwordRequirements).every(req => req);
+
+            if (!isPasswordStrong) {
+                errors.push('Пароль не соответствует требованиям безопасности');
+            }
+
+            if (data.password1 !== data.password2) {  // ИЗМЕНЕНО
+                errors.push('Пароли не совпадают');
+            }
+
+            // Проверка выбора роли
+            if (!data.user_type) {
+                errors.push('Выберите тип аккаунта');
+            }
+
+            // Проверка соглашения
+            if (!data.terms) {
+                errors.push('Необходимо принять условия использования');
+            }
+
+            // Если есть ошибки
+            if (errors.length > 0) {
+                showErrors(errors);
+                return;
+            }
+
+            // Показываем загрузку
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Регистрация...</span>';
+                submitBtn.disabled = true;
+            }
+
+            // Отправка формы (в реальном проекте будет AJAX)
+            setTimeout(() => {
+                // В реальном проекте здесь будет:
+                this.submit();
+            }, 1500);
         });
-
-        console.log('Данные формы:', data);
-
-        // Валидация
-        const errors = [];
-
-        // Проверка имени и фамилии
-        if (!data.first_name || !/^[а-яА-ЯёЁa-zA-Z\s\-]+$/.test(data.first_name) || data.first_name.trim().length < 2) {
-            errors.push('Имя должно содержать минимум 2 буквы и только буквы');
-        }
-
-        if (!data.last_name || !/^[а-яА-ЯёЁa-zA-Z\s\-]+$/.test(data.last_name) || data.last_name.trim().length < 2) {
-            errors.push('Фамилия должна содержать минимум 2 буквы и только буквы');
-        }
-
-        // Проверка email
-        if (!validateEmail(data.email)) {
-            errors.push('Введите корректный email');
-        }
-
-        if (data.email !== data.confirm_email) {
-            errors.push('Email не совпадают');
-        }
-
-        // Проверка пароля
-        const passwordRequirements = validatePassword(data.password);
-        const isPasswordStrong = Object.values(passwordRequirements).every(req => req);
-
-        if (!isPasswordStrong) {
-            errors.push('Пароль не соответствует требованиям безопасности');
-        }
-
-        if (data.password !== data.confirm_password) {
-            errors.push('Пароли не совпадают');
-        }
-
-        // Проверка выбора роли
-        if (!data.user_type) {
-            errors.push('Выберите тип аккаунта');
-        }
-
-        // Проверка соглашения
-        if (!data.terms) {
-            errors.push('Необходимо принять условия использования');
-        }
-
-        // Если есть ошибки
-        if (errors.length > 0) {
-            showErrors(errors);
-            return;
-        }
-
-        // Показываем загрузку
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Регистрация...</span>';
-        submitBtn.disabled = true;
-
-        // Отправка формы (в реальном проекте будет AJAX)
-        setTimeout(() => {
-            // Симуляция успешной регистрации
-            showSuccessMessage(data);
-
-            // В реальном проекте здесь будет:
-            // this.submit();
-        }, 1500);
-    });
+    } else {
+        console.error('Форма не найдена');
+    }
 
     // Показать ошибки
     function showErrors(errors) {
         // Создаем контейнер для ошибок
         let errorContainer = document.querySelector('.error-container');
-        if (!errorContainer) {
+        if (!errorContainer && form) {
             errorContainer = document.createElement('div');
             errorContainer.className = 'error-container';
             const firstSection = form.querySelector('.form-section');
@@ -323,60 +355,29 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-        errorContainer.innerHTML = `
-            <div class="error-message">
-                <i class="fas fa-exclamation-circle"></i>
-                <div>
-                    <h4>Пожалуйста, исправьте следующие ошибки:</h4>
-                    <ul>
-                        ${errors.map(error => `<li>${error}</li>`).join('')}
-                    </ul>
+        if (errorContainer) {
+            errorContainer.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <div>
+                        <h4>Пожалуйста, исправьте следующие ошибки:</h4>
+                        <ul>
+                            ${errors.map(error => `<li>${error}</li>`).join('')}
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        `;
+            `;
 
-        // Прокручиваем к ошибкам
-        errorContainer.scrollIntoView({ behavior: 'smooth' });
+            // Прокручиваем к ошибкам
+            errorContainer.scrollIntoView({ behavior: 'smooth' });
 
-        // Автоматическое скрытие через 5 секунд
-        setTimeout(() => {
-            if (errorContainer.parentElement) {
-                errorContainer.remove();
-            }
-        }, 5000);
-    }
-
-    // Показать сообщение об успехе
-    function showSuccessMessage(data) {
-        const formContent = document.querySelector('.registration-form');
-        const roleText = data.user_type === 'job_seeker' ? 'Соискатель' : 'Работодатель';
-
-        formContent.innerHTML = `
-            <div class="success-message">
-                <div class="success-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <h3>Регистрация успешно завершена!</h3>
-                <p class="success-subtitle">
-                    Ваш аккаунт <strong>${data.email}</strong> успешно создан.
-                </p>
-                <div class="success-details">
-                    <p><strong>Имя:</strong> ${data.first_name} ${data.last_name}</p>
-                    <p><strong>Тип аккаунта:</strong> ${roleText}</p>
-                    <p>На указанный email отправлено письмо с подтверждением.</p>
-                </div>
-                <div class="success-actions">
-                    <a href="{% url 'home' %}" class="btn-secondary">
-                        <i class="fas fa-home"></i>
-                        <span>На главную</span>
-                    </a>
-                    <a href="{% url 'login' %}" class="btn-primary">
-                        <i class="fas fa-sign-in-alt"></i>
-                        <span>Войти в систему</span>
-                    </a>
-                </div>
-            </div>
-        `;
+            // Автоматическое скрытие через 5 секунд
+            setTimeout(() => {
+                if (errorContainer.parentElement) {
+                    errorContainer.remove();
+                }
+            }, 5000);
+        }
     }
 
     // Инициализация: скрываем оба блока при загрузке

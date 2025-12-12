@@ -1,4 +1,5 @@
 {% load static %}
+
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -7,6 +8,105 @@
     <link rel="stylesheet" href="{% static 'css/profile.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Стили для сообщений об ошибках */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+        }
+
+        .alert i {
+            font-size: 18px;
+        }
+
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .message.error {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+        }
+
+        .message.success {
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+        }
+
+        .message.info {
+            background: #dbeafe;
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Стили для полей с ошибками */
+        .floating-input.invalid input {
+            border-color: #dc2626 !important;
+        }
+
+        .floating-input.invalid .input-underline {
+            background: #dc2626 !important;
+        }
+
+        .validation-message.error {
+            color: #dc2626;
+            font-size: 12px;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .validation-message.error::before {
+            content: '⚠';
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
     <!-- Градиентные волны -->
@@ -18,7 +118,7 @@
         <!-- Главный заголовок -->
         <header class="main-header">
             <div class="logo-container">
-                <a href="" class="logo-link">
+                <a href="{% url 'main' %}" class="logo-link">
                     <div class="logo-wrapper">
                         <div class="logo-icon">
                             <i class="fas fa-route"></i>
@@ -33,7 +133,7 @@
                 </a>
             </div>
             <div class="header-actions">
-                <a href="" class="back-btn">
+                <a href="{% url 'main' %}" class="back-btn">
                     <i class="fas fa-arrow-left"></i>
                     <span>На главную</span>
                 </a>
@@ -53,68 +153,81 @@
                         <p>Введите свои учетные данные</p>
                     </div>
 
-                    <form id="loginForm" method="POST" action="">
-                        {% csrf_token %}
+          <form method="post" action="{% url 'login' %}" style="
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 30px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-family: Arial, sans-serif;">
+            {% csrf_token %}
+            {{ form.as_p }}
 
-                        <div class="form-group floating-input">
-                            <input type="email" id="email" name="email" required
-                                   placeholder="example@email.com">
-                            <label for="email">
-                                <i class="fas fa-envelope"></i>
-                                <span>Электронная почта</span>
-                            </label>
-                            <div class="input-underline"></div>
-                            <div class="input-hint">
-                                <i class="fas fa-info-circle"></i>
-                                <span>Введите email, указанный при регистрации</span>
-                            </div>
-                            <div class="validation-message"></div>
-                        </div>
+            {% if form.non_field_errors %}
+                <div class="error-box">
+                    {{ form.non_field_errors }}
+                </div>
+            {% endif %}
 
-                        <div class="form-group floating-input">
-                            <div class="password-wrapper">
-                                <input type="password" id="password" name="password" required
-                                       placeholder="Ваш пароль">
-                                <button type="button" class="toggle-password" tabindex="-1">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                            </div>
-                            <label for="password">
-                                <i class="fas fa-lock"></i>
-                                <span>Пароль</span>
-                            </label>
-                            <div class="input-underline"></div>
-                            <div class="validation-message"></div>
-                        </div>
+            <button type="submit" style="
+                width: 100%;
+                padding: 12px;
+                background: #007bff;
+                border: none;
+                border-radius: 6px;
+                color: #fff;
+                font-size: 16px;
+                cursor: pointer;
+                transition: background 0.3s;">
+                Войти
+            </button>
+        </form>
 
-                        <div class="form-options">
-                            <label class="checkbox remember-me">
-                                <input type="checkbox" id="remember" name="remember">
-                                <span class="checkmark"></span>
-                                <span>Запомнить меня</span>
-                            </label>
-                            <a href="" class="forgot-password">
-                                <i class="fas fa-question-circle"></i>
-                                <span>Забыли пароль?</span>
-                            </a>
-                        </div>
+        <style>
+        /* Общий стиль ошибок */
+        .errorlist {
+            list-style: none;
+            padding: 0;
+            margin: 5px 0 10px;
+            color: #d9534f;
+            font-size: 13px;
+        }
 
-                        <button type="submit" class="btn-primary">
-                            <i class="fas fa-sign-in-alt"></i>
-                            <span>Войти в систему</span>
-                        </button>
+        /* Блок для общих ошибок */
+        .error-box {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        </style>
 
-                        {% if messages %}
-                            <div class="messages">
-                                {% for message in messages %}
-                                    <div class="message {{ message.tags }}">
-                                        <i class="fas fa-{% if message.tags == 'error' %}exclamation-circle{% else %}info-circle{% endif %}"></i>
-                                        <span>{{ message }}</span>
-                                    </div>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </form>
+
+<style>
+form input[type="text"],
+form input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+form input[type="text"]:focus,
+form input[type="password"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 6px rgba(0,123,255,0.3);
+    outline: none;
+}
+</style>
+
+
 
                     <div class="divider">
                         <span>или</span>
@@ -191,14 +304,67 @@
             <div class="footer-content">
                 <p>&copy; 2024 WorkWay. Все права защищены.</p>
                 <div class="footer-links">
-                    <a href="">Политика конфиденциальности</a>
-                    <a href="">Условия использования</a>
-                    <a href="">Контакты</a>
+                    <a href="#">Политика конфиденциальности</a>
+                    <a href="#">Условия использования</a>
+                    <a href="#">Контакты</a>
                 </div>
             </div>
         </footer>
     </div>
 
     <script src="{% static 'js/profile.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Переключение видимости пароля
+            const togglePasswordBtn = document.querySelector('.toggle-password');
+            const passwordInput = document.getElementById('password');
+
+            if (togglePasswordBtn && passwordInput) {
+                togglePasswordBtn.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+
+                    if (passwordInput.type === 'password') {
+                        passwordInput.type = 'text';
+                        icon.classList.remove('fa-eye');
+                        icon.classList.add('fa-eye-slash');
+                    } else {
+                        passwordInput.type = 'password';
+                        icon.classList.remove('fa-eye-slash');
+                        icon.classList.add('fa-eye');
+                    }
+                });
+            }
+
+            // Показывать/скрывать ошибки при вводе
+            const emailInput = document.getElementById('email');
+            const passwordInputField = document.getElementById('password');
+
+            function clearError(input) {
+                const formGroup = input.closest('.form-group');
+                if (formGroup) {
+                    formGroup.classList.remove('invalid');
+                }
+            }
+
+            if (emailInput) {
+                emailInput.addEventListener('input', function() {
+                    clearError(this);
+                });
+            }
+
+            if (passwordInputField) {
+                passwordInputField.addEventListener('input', function() {
+                    clearError(this);
+                });
+            }
+
+            // Автофокус на поле email
+            if (emailInput && !emailInput.value) {
+                emailInput.focus();
+            }
+
+            console.log('Login form initialized');
+        });
+    </script>
 </body>
 </html>

@@ -810,3 +810,109 @@ footer {
         padding: 20px;
     }
 }
+
+
+form {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
+}
+
+form h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+form input[type="text"],
+form input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+form input[type="text"]:focus,
+form input[type="password"]:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+form button {
+    width: 100%;
+    padding: 12px;
+    background: #007bff;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+form button:hover {
+    background: #0056b3;
+}
+
+form .errorlist {
+    color: #d9534f;
+    font-size: 13px;
+    margin-bottom: 10px;
+    list-style: none;
+    padding: 0;
+}
+
+/* Общий стиль для контейнера формы */
+form {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 25px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
+}
+
+/* Поля ввода */
+form input[type="text"],
+form input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Эффект при фокусе */
+form input[type="text"]:focus,
+form input[type="password"]:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 6px rgba(0,123,255,0.3);
+    outline: none;
+}
+
+/* Кнопка */
+form button {
+    width: 100%;
+    padding: 12px;
+    background: #007bff;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+form button:hover {
+    background: #0056b3;
+}

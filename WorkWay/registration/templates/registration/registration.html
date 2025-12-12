@@ -1,5 +1,5 @@
 {% load static %}
-<!DOCTYPE html>
+
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -31,7 +31,7 @@
     <div class="container">
         <header class="main-header">
             <div class="logo-container">
-                <a href="" class="logo-link">
+                <a href="{% url 'main' %}" class="logo-link">
                     <div class="logo-wrapper">
                         <div class="logo-icon">
                             <i class="fas fa-route"></i>
@@ -46,7 +46,7 @@
                 </a>
             </div>
             <div class="header-actions">
-                <a href="" cаlass="back-btn">
+                <a href="{% url 'main' %}" class="back-btn">
                     <i class="fas fa-arrow-left"></i>
                     <span>На главную</span>
                 </a>
@@ -58,9 +58,21 @@
                 <div class="registration-header">
                     <h2><i class="fas fa-user-plus"></i> Создание аккаунта</h2>
                     <p class="registration-subtitle">Заполните информацию для регистрации</p>
+
+                    <!-- Отображение ошибок -->
+                    {% if messages %}
+                    <div class="alert-container">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            <i class="fas fa-exclamation-circle"></i>
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
                 </div>
 
-                <form id="registrationForm" class="registration-form" method="POST" action="">
+                <form id="registrationForm" class="registration-form" method="POST" action="{% url 'register' %}">
                     {% csrf_token %}
 
                     <!-- Персональная информация -->
@@ -73,26 +85,31 @@
                         <div class="form-grid">
                             <div class="form-group floating-input">
                                 <input type="text" id="first_name" name="first_name" required
-                                       placeholder="Введите ваше имя">
-                                <label for="first_name">
-                                    <i class="fas fa-user"></i>
-                                    <span>Имя *</span>
-                                </label>
+                                       placeholder="Введите ваше имя"
+                                       value="{{ user_form.first_name.value|default_if_none:'' }}">
                                 <div class="input-underline"></div>
-                                <div class="validation-message"></div>
+                                {% if user_form.first_name.errors %}
+                                <div class="validation-message error">
+                                    {{ user_form.first_name.errors.0 }}
+                                </div>
+                                {% endif %}
                             </div>
 
                             <div class="form-group floating-input">
                                 <input type="text" id="last_name" name="last_name" required
-                                       placeholder="Введите вашу фамилию">
-                                <label for="last_name">
-                                    <i class="fas fa-user"></i>
-                                    <span>Фамилия *</span>
-                                </label>
+                                       placeholder="Введите вашу фамилию"
+                                       value="{{ user_form.last_name.value|default_if_none:'' }}">
                                 <div class="input-underline"></div>
-                                <div class="validation-message"></div>
+                                {% if user_form.last_name.errors %}
+                                <div class="validation-message error">
+                                    {{ user_form.last_name.errors.0 }}
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
+
+
+
                     </div>
 
                     <!-- Контактная информация -->
@@ -104,24 +121,26 @@
 
                         <div class="form-group floating-input">
                             <input type="email" id="email" name="email" required
-                                   placeholder="example@email.com">
-                            <label for="email">
-                                <i class="fas fa-at"></i>
-                                <span>Электронная почта *</span>
-                            </label>
+                                   placeholder="Введите ваш email (example@email.com)"
+                                   value="{{ user_form.email.value|default_if_none:'' }}">
                             <div class="input-underline"></div>
-                            <div class="validation-message"></div>
+                            {% if user_form.email.errors %}
+                            <div class="validation-message error">
+                                {{ user_form.email.errors.0 }}
+                            </div>
+                            {% endif %}
                         </div>
 
                         <div class="form-group floating-input">
                             <input type="email" id="confirm_email" name="confirm_email" required
-                                   placeholder="Повторите email">
-                            <label for="confirm_email">
-                                <i class="fas fa-envelope"></i>
-                                <span>Подтверждение email *</span>
-                            </label>
+                                   placeholder="Повторите email"
+                                   value="{{ user_form.confirm_email.value|default_if_none:'' }}">
                             <div class="input-underline"></div>
-                            <div class="validation-message"></div>
+                            {% if user_form.confirm_email.errors %}
+                            <div class="validation-message error">
+                                {{ user_form.confirm_email.errors.0 }}
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
 
@@ -134,43 +153,45 @@
 
                         <div class="form-group floating-input">
                             <div class="password-wrapper">
-                                <input type="password" id="password" name="password" required
-                                       placeholder="Создайте пароль">
+                                <input type="password" id="id_password1" name="password1" required
+                                       placeholder="Создайте пароль"
+                                       value="{{ user_form.password1.value|default_if_none:'' }}">
                                 <button type="button" class="toggle-password" tabindex="-1">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
-                            <label for="password">
-                                <i class="fas fa-key"></i>
-                                <span>Пароль *</span>
-                            </label>
                             <div class="input-underline"></div>
                             <div class="password-strength">
-                                <div class="strength-bar">
-                                    <div class="strength-fill" data-strength="0"></div>
+
+
                                 </div>
                                 <div class="strength-text">
-                                    <i class="fas fa-exclamation-circle"></i>
-                                    <span>Введите пароль</span>
-                                </div>
+
+
+
                             </div>
-                            <div class="validation-message"></div>
+                            {% if user_form.password1.errors %}
+                            <div class="validation-message error">
+                                {{ user_form.password1.errors.0 }}
+                            </div>
+                            {% endif %}
                         </div>
 
                         <div class="form-group floating-input">
                             <div class="password-wrapper">
-                                <input type="password" id="confirm_password" name="confirm_password" required
-                                       placeholder="Повторите пароль">
+                                <input type="password" id="id_password2" name="password2" required
+                                       placeholder="Повторите пароль"
+                                       value="{{ user_form.password2.value|default_if_none:'' }}">
                                 <button type="button" class="toggle-password" tabindex="-1">
                                     <i class="fas fa-eye"></i>
                                 </button>
                             </div>
-                            <label for="confirm_password">
-                                <i class="fas fa-key"></i>
-                                <span>Подтверждение пароля *</span>
-                            </label>
                             <div class="input-underline"></div>
-                            <div class="validation-message"></div>
+                            {% if user_form.password2.errors %}
+                            <div class="validation-message error">
+                                {{ user_form.password2.errors.0 }}
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
 
@@ -184,7 +205,8 @@
                         <div class="role-selection">
                             <div class="role-options">
                                 <label class="role-option">
-                                    <input type="radio" name="user_type" value="job_seeker" required>
+                                    <input type="radio" name="user_type" value="job_seeker" required
+                                           {% if profile_form.user_type.value == 'job_seeker' %}checked{% endif %}>
                                     <div class="role-card">
                                         <div class="role-icon">
                                             <i class="fas fa-user-graduate"></i>
@@ -200,7 +222,8 @@
                                 </label>
 
                                 <label class="role-option">
-                                    <input type="radio" name="user_type" value="employer">
+                                    <input type="radio" name="user_type" value="employer"
+                                           {% if profile_form.user_type.value == 'employer' %}checked{% endif %}>
                                     <div class="role-card">
                                         <div class="role-icon">
                                             <i class="fas fa-briefcase"></i>
@@ -215,6 +238,11 @@
                                     </div>
                                 </label>
                             </div>
+                            {% if profile_form.user_type.errors %}
+                            <div class="validation-message error">
+                                {{ profile_form.user_type.errors.0 }}
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
 
@@ -228,49 +256,74 @@
                         <div class="form-grid">
                             <div class="form-group floating-input">
                                 <input type="text" id="position" name="position"
-                                       placeholder="Желаемая должность">
-                                <label for="position">
-                                    <i class="fas fa-briefcase"></i>
-                                    <span>Желаемая должность</span>
-                                </label>
+                                       placeholder="Желаемая должность"
+                                       value="{{ profile_form.position.value|default_if_none:'' }}">
                                 <div class="input-underline"></div>
+                                {% if profile_form.position.errors %}
+                                <div class="validation-message error">
+                                    {{ profile_form.position.errors.0 }}
+                                </div>
+                                {% endif %}
                             </div>
 
                             <div class="form-group floating-input">
                                 <input type="text" id="experience" name="experience"
-                                       placeholder="Опыт работы (лет)">
-                                <label for="experience">
-                                    <i class="fas fa-chart-line"></i>
-                                    <span>Опыт работы</span>
-                                </label>
+                                       placeholder="Опыт работы (лет)"
+                                       value="{{ profile_form.experience.value|default_if_none:'' }}">
                                 <div class="input-underline"></div>
+                                {% if profile_form.experience.errors %}
+                                <div class="validation-message error">
+                                    {{ profile_form.experience.errors.0 }}
+                                </div>
+                                {% endif %}
                             </div>
 
                             <div class="form-group floating-input">
                                 <input type="text" id="skills" name="skills"
-                                       placeholder="Ключевые навыки (через запятую)">
-                                <label for="skills">
-                                    <i class="fas fa-tools"></i>
-                                    <span>Ключевые навыки</span>
-                                </label>
+                                       placeholder="Ключевые навыки"
+                                       value="{{ profile_form.skills.value|default_if_none:'' }}">
                                 <div class="input-underline"></div>
+                                {% if profile_form.skills.errors %}
+                                <div class="validation-message error">
+                                    {{ profile_form.skills.errors.0 }}
+                                </div>
+                                {% endif %}
                             </div>
 
                             <div class="form-group floating-input">
                                 <input type="text" id="education" name="education"
-                                       placeholder="Образование">
-                                <label for="education">
-                                    <i class="fas fa-graduation-cap"></i>
-                                    <span>Образование</span>
-                                </label>
+                                       placeholder="Образование"
+                                       value="{{ profile_form.education.value|default_if_none:'' }}">
                                 <div class="input-underline"></div>
+                                {% if profile_form.education.errors %}
+                                <div class="validation-message error">
+                                    {{ profile_form.education.errors.0 }}
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-group floating-input">
+                                <input type="text" id="previous_work" name="previous_work"
+                                       placeholder="Ранее занимаемые должности"
+                                       value="{{ profile_form.previous_work.value|default_if_none:'' }}">
+                                <div class="input-underline"></div>
+                                {% if profile_form.previous_work.errors %}
+                                <div class="validation-message error">
+                                    {{ profile_form.previous_work.errors.0 }}
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="about"><i class="fas fa-user-edit"></i> О себе</label>
+                        <div class="form-group floating-input">
+
                             <textarea id="about" name="about" rows="4"
-                                      placeholder="Расскажите о себе, своих целях и опыте..."></textarea>
+                                      placeholder="Расскажите о себе, своих целях и опыте...">{{ profile_form.about.value|default_if_none:'' }}</textarea>
+                            {% if profile_form.about.errors %}
+                            <div class="validation-message error">
+                                {{ profile_form.about.errors.0 }}
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
 
@@ -284,49 +337,50 @@
                         <div class="form-grid">
                             <div class="form-group floating-input">
                                 <input type="text" id="company_name" name="company_name"
-                                       placeholder="Название компании">
-                                <label for="company_name">
-                                    <i class="fas fa-building"></i>
-                                    <span>Название компании</span>
-                                </label>
+                                       placeholder="Название компании"
+                                       value="{{ profile_form.company_name.value|default_if_none:'' }}">
                                 <div class="input-underline"></div>
-                            </div>
-
-                            <div class="form-group floating-input">
-                                <input type="text" id="company_position" name="company_position"
-                                       placeholder="Ваша должность">
-                                <label for="company_position">
-                                    <i class="fas fa-user-tie"></i>
-                                    <span>Ваша должность</span>
-                                </label>
-                                <div class="input-underline"></div>
+                                {% if profile_form.company_name.errors %}
+                                <div class="validation-message error">
+                                    {{ profile_form.company_name.errors.0 }}
+                                </div>
+                                {% endif %}
                             </div>
 
                             <div class="form-group floating-input">
                                 <input type="text" id="industry" name="industry"
-                                       placeholder="Сфера деятельности">
-                                <label for="industry">
-                                    <i class="fas fa-industry"></i>
-                                    <span>Сфера деятельности</span>
-                                </label>
+                                       placeholder="Сфера деятельности"
+                                       value="{{ profile_form.industry.value|default_if_none:'' }}">
                                 <div class="input-underline"></div>
+                                {% if profile_form.industry.errors %}
+                                <div class="validation-message error">
+                                    {{ profile_form.industry.errors.0 }}
+                                </div>
+                                {% endif %}
                             </div>
 
                             <div class="form-group floating-input">
                                 <input type="text" id="company_size" name="company_size"
-                                       placeholder="Количество сотрудников">
-                                <label for="company_size">
-                                    <i class="fas fa-users"></i>
-                                    <span>Размер компании</span>
-                                </label>
+                                       placeholder="Количество сотрудников"
+                                       value="{{ profile_form.company_size.value|default_if_none:'' }}">
                                 <div class="input-underline"></div>
+                                {% if profile_form.company_size.errors %}
+                                <div class="validation-message error">
+                                    {{ profile_form.company_size.errors.0 }}
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="company_description"><i class="fas fa-file-alt"></i> О компании</label>
+                        <div class="form-group floating-input">
+
                             <textarea id="company_description" name="company_description" rows="4"
-                                      placeholder="Расскажите о вашей компании, миссии и ценностях..."></textarea>
+                                      placeholder="Расскажите о вашей компании, миссии и ценностях...">{{ profile_form.company_description.value|default_if_none:'' }}</textarea>
+                            {% if profile_form.company_description.errors %}
+                            <div class="validation-message error">
+                                {{ profile_form.company_description.errors.0 }}
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
 
@@ -334,7 +388,8 @@
                     <div class="form-section">
                         <div class="agreement-item">
                             <label class="checkbox agreement-checkbox">
-                                <input type="checkbox" id="terms" name="terms" required>
+                                <input type="checkbox" id="terms" name="terms" required
+                                       {% if profile_form.terms.value %}checked{% endif %}>
                                 <span class="checkmark"></span>
                                 <span class="agreement-text">
                                     Я принимаю
@@ -343,11 +398,17 @@
                                     <a href="#" class="agreement-link">Политику конфиденциальности</a>
                                 </span>
                             </label>
+                            {% if profile_form.terms.errors %}
+                            <div class="validation-message error">
+                                {{ profile_form.terms.errors.0 }}
+                            </div>
+                            {% endif %}
                         </div>
 
                         <div class="agreement-item">
                             <label class="checkbox agreement-checkbox">
-                                <input type="checkbox" id="newsletter" name="newsletter">
+                                <input type="checkbox" id="newsletter" name="newsletter"
+                                       {% if profile_form.newsletter.value %}checked{% endif %}>
                                 <span class="checkmark"></span>
                                 <span class="agreement-text">
                                     Я хочу получать новости и специальные предложения от WorkWay
@@ -358,7 +419,7 @@
 
                     <!-- Кнопки действий -->
                     <div class="form-actions">
-                        <a href="" class="btn-secondary">
+                        <a href="{% url 'main' %}" class="btn-secondary">
                             <i class="fas fa-times"></i>
                             <span>Отмена</span>
                         </a>
@@ -422,5 +483,6 @@
     </div>
 
     <script src="{% static 'js/registr.js' %}"></script>
+
 </body>
 </html>

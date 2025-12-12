@@ -1,0 +1,429 @@
+{% load static %}
+
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkWay - Мой профиль</title>
+    <link rel="stylesheet" href="{% static 'css/profileUser.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Градиентные волны -->
+    <div class="gradient-wave wave-1"></div>
+    <div class="gradient-wave wave-2"></div>
+    <div class="gradient-wave wave-3"></div>
+
+    <div class="container">
+        <!-- Главный заголовок -->
+        <header class="main-header">
+            <div class="logo-container">
+                <a href="{% url 'main' %}" class="logo-link">
+                    <div class="logo-wrapper">
+                        <div class="logo-icon">
+                            <i class="fas fa-route"></i>
+                        </div>
+                        <div class="logo-text">
+                            <h1 class="logo-title">
+                                <span class="logo-highlight">Work</span><span class="logo-second">Way</span>
+                            </h1>
+                            <p class="logo-subtitle">Мой профиль</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'main' %}" class="back-btn">
+                    <i class="fas fa-home"></i>
+                    <span>На главную</span>
+                </a>
+                <a href="" class="btn-secondary logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Выйти</span>
+                </a>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="profile-container">
+                <!-- Заголовок профиля -->
+                <div class="profile-header">
+                    <div class="profile-avatar">
+                        <div class="avatar-circle">
+                            {% if profile.account_type == 'job_seeker' %}
+                                <i class="fas fa-user-graduate"></i>
+                            {% else %}
+                                <i class="fas fa-briefcase"></i>
+                            {% endif %}
+                        </div>
+                        <div class="account-type-badge">
+                            {% if profile.account_type == 'job_seeker' %}
+                                <i class="fas fa-user-graduate"></i>
+                                <span>Соискатель</span>
+                            {% else %}
+                                <i class="fas fa-briefcase"></i>
+                                <span>Работодатель</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="profile-info">
+                        <h1 class="profile-name">{{ profile.first_name }} {{ profile.last_name }}</h1>
+                        <p class="profile-email">
+                            <i class="fas fa-envelope"></i>
+                            {{ profile.email }}
+                        </p>
+
+                        {% if profile.is_job_seeker and profile.position %}
+                        <div class="profile-position">
+                            <i class="fas fa-briefcase"></i>
+                            <span>Ищет: {{ profile.position }}</span>
+                        </div>
+                        {% endif %}
+
+                        {% if profile.is_employer and profile.company_name %}
+                        <div class="company-name">
+                            <i class="fas fa-building"></i>
+                            <span>{{ profile.company_name }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="profile-actions">
+                        <button class="btn-primary edit-profile-btn">
+                            <i class="fas fa-edit"></i>
+                            <span>Редактировать</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Основная информация профиля -->
+                <div class="profile-content">
+                    <!-- Левая колонка - Основная информация -->
+                    <div class="profile-main">
+                        {% if profile.is_job_seeker %}
+                            <!-- Профиль соискателя -->
+                            <div class="info-section">
+                                <div class="section-header">
+                                    <h3><i class="fas fa-file-alt"></i> Мое резюме</h3>
+                                </div>
+
+                                <div class="info-grid">
+                                    {% if profile.position %}
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="fas fa-bullseye"></i>
+                                            <span>Желаемая должность</span>
+                                        </div>
+                                        <div class="info-value">{{ profile.position }}</div>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if profile.experience %}
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="fas fa-chart-line"></i>
+                                            <span>Опыт работы</span>
+                                        </div>
+                                        <div class="info-value">{{ profile.experience }}</div>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if profile.education %}
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="fas fa-graduation-cap"></i>
+                                            <span>Образование</span>
+                                        </div>
+                                        <div class="info-value">{{ profile.education }}</div>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if profile.skills %}
+                                    <div class="info-item full-width">
+                                        <div class="info-label">
+                                            <i class="fas fa-tools"></i>
+                                            <span>Ключевые навыки</span>
+                                        </div>
+                                        <div class="info-value">
+                                            <div class="skills-list">
+                                                {% for skill in profile.skills.splitlines %}
+                                                    <span class="skill-tag">{{ skill }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if profile.previous_work %}
+                                    <div class="info-item full-width">
+                                        <div class="info-label">
+                                            <i class="fas fa-history"></i>
+                                            <span>Ранее занимаемые должности</span>
+                                        </div>
+                                        <div class="info-value">{{ profile.previous_work|linebreaks }}</div>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if profile.about %}
+                                    <div class="info-item full-width">
+                                        <div class="info-label">
+                                            <i class="fas fa-user-edit"></i>
+                                            <span>О себе</span>
+                                        </div>
+                                        <div class="info-value">{{ profile.about|linebreaks }}</div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Статистика откликов -->
+                            <div class="info-section">
+                                <div class="section-header">
+                                    <h3><i class="fas fa-chart-bar"></i> Моя активность</h3>
+                                </div>
+                                <div class="stats-grid">
+                                    <div class="stat-card">
+                                        <div class="stat-icon sent">
+                                            <i class="fas fa-paper-plane"></i>
+                                        </div>
+                                        <div class="stat-content">
+                                            <div class="stat-number">12</div>
+                                            <div class="stat-label">Отправлено откликов</div>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-icon viewed">
+                                            <i class="fas fa-eye"></i>
+                                        </div>
+                                        <div class="stat-content">
+                                            <div class="stat-number">8</div>
+                                            <div class="stat-label">Просмотрено работодателями</div>
+                                        </div>
+                                    </div>
+                                    <div class="stat-card">
+                                        <div class="stat-icon invited">
+                                            <i class="fas fa-handshake"></i>
+                                        </div>
+                                        <div class="stat-content">
+                                            <div class="stat-number">3</div>
+                                            <div class="stat-label">Приглашений на собеседование</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        {% else %}
+                            <!-- Профиль работодателя -->
+                            <div class="info-section">
+                                <div class="section-header">
+                                    <h3><i class="fas fa-building"></i> Информация о компании</h3>
+                                </div>
+
+                                <div class="info-grid">
+                                    {% if profile.company_name %}
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="fas fa-building"></i>
+                                            <span>Название компании</span>
+                                        </div>
+                                        <div class="info-value">{{ profile.company_name }}</div>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if profile.industry %}
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="fas fa-industry"></i>
+                                            <span>Сфера деятельности</span>
+                                        </div>
+                                        <div class="info-value">{{ profile.industry }}</div>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if profile.company_size %}
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="fas fa-users"></i>
+                                            <span>Количество сотрудников</span>
+                                        </div>
+                                        <div class="info-value">{{ profile.company_size }}</div>
+                                    </div>
+                                    {% endif %}
+
+                                    {% if profile.company_description %}
+                                    <div class="info-item full-width">
+                                        <div class="info-label">
+                                            <i class="fas fa-file-alt"></i>
+                                            <span>О компании</span>
+                                        </div>
+                                        <div class="info-value">{{ profile.company_description|linebreaks }}</div>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Вакансии компании -->
+                            <div class="info-section">
+                                <div class="section-header">
+                                    <h3><i class="fas fa-bullhorn"></i> Мои вакансии</h3>
+                                    <button class="btn-secondary add-vacancy-btn">
+                                        <i class="fas fa-plus"></i>
+                                        <span>Добавить вакансию</span>
+                                    </button>
+                                </div>
+
+                                <div class="vacancies-list">
+                                    <div class="vacancy-card">
+                                        <div class="vacancy-header">
+                                            <h4>Senior Frontend Developer</h4>
+                                            <span class="vacancy-status active">Активна</span>
+                                        </div>
+                                        <div class="vacancy-info">
+                                            <span class="vacancy-meta">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                                Удаленно
+                                            </span>
+                                            <span class="vacancy-meta">
+                                                <i class="fas fa-money-bill-wave"></i>
+                                                От 200 000 ₽
+                                            </span>
+                                            <span class="vacancy-meta">
+                                                <i class="fas fa-users"></i>
+                                                24 отклика
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <div class="vacancy-card">
+                                        <div class="vacancy-header">
+                                            <h4>UI/UX Designer</h4>
+                                            <span class="vacancy-status active">Активна</span>
+                                        </div>
+                                        <div class="vacancy-info">
+                                            <span class="vacancy-meta">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                                Москва
+                                            </span>
+                                            <span class="vacancy-meta">
+                                                <i class="fas fa-money-bill-wave"></i>
+                                                От 150 000 ₽
+                                            </span>
+                                            <span class="vacancy-meta">
+                                                <i class="fas fa-users"></i>
+                                                18 откликов
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Правая колонка - Быстрые действия и статистика -->
+                    <div class="profile-sidebar">
+                        <!-- Быстрые действия -->
+                        <div class="quick-actions">
+                            <h3><i class="fas fa-bolt"></i> Быстрые действия</h3>
+
+                            {% if profile.is_job_seeker %}
+                                <a href="#" class="quick-action-btn">
+                                    <i class="fas fa-search"></i>
+                                    <span>Найти вакансии</span>
+                                </a>
+                                <a href="#" class="quick-action-btn">
+                                    <i class="fas fa-file-upload"></i>
+                                    <span>Обновить резюме</span>
+                                </a>
+                                <a href="#" class="quick-action-btn">
+                                    <i class="fas fa-bell"></i>
+                                    <span>Уведомления (3)</span>
+                                </a>
+                            {% else %}
+                                <a href="#" class="quick-action-btn">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Создать вакансию</span>
+                                </a>
+                                <a href="#" class="quick-action-btn">
+                                    <i class="fas fa-search"></i>
+                                    <span>Найти кандидатов</span>
+                                </a>
+                                <a href="#" class="quick-action-btn">
+                                    <i class="fas fa-bell"></i>
+                                    <span>Отклики (12)</span>
+                                </a>
+                            {% endif %}
+
+                            <a href="#" class="quick-action-btn">
+                                <i class="fas fa-cog"></i>
+                                <span>Настройки</span>
+                            </a>
+                        </div>
+
+                        <!-- Информация об аккаунте -->
+                        <div class="account-info">
+                            <h3><i class="fas fa-user-circle"></i> Об аккаунте</h3>
+                            <div class="info-list">
+                                <div class="info-row">
+                                    <span class="info-label">Дата регистрации</span>
+                                    <span class="info-value">{{ user.date_joined|date:"d.m.Y" }}</span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Статус аккаунта</span>
+                                    <span class="status-badge verified">
+                                        <i class="fas fa-check-circle"></i>
+                                        <span>Подтвержден</span>
+                                    </span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Подписка</span>
+                                    <span class="status-badge {% if profile.newsletter %}active{% else %}inactive{% endif %}">
+                                        {% if profile.newsletter %}
+                                            <i class="fas fa-bell"></i>
+                                            <span>Активна</span>
+                                        {% else %}
+                                            <i class="fas fa-bell-slash"></i>
+                                            <span>Неактивна</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Полезные ссылки -->
+                        <div class="useful-links">
+                            <h3><i class="fas fa-link"></i> Полезные ссылки</h3>
+                            <a href="#" class="link-item">
+                                <i class="fas fa-question-circle"></i>
+                                <span>Помощь и поддержка</span>
+                            </a>
+                            <a href="#" class="link-item">
+                                <i class="fas fa-file-contract"></i>
+                                <span>Условия использования</span>
+                            </a>
+                            <a href="#" class="link-item">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Безопасность аккаунта</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-content">
+                <p>&copy; 2024 WorkWay. Все права защищены.</p>
+                <div class="footer-links">
+                    <a href="#">Политика конфиденциальности</a>
+                    <a href="#">Условия использования</a>
+                    <a href="#">Помощь</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{% static 'js/profileUser.js' %}"></script>
+</body>
+</html>
