@@ -105,7 +105,7 @@ def register_view(request):
 
                     # Редирект на главную
                     print("Перенаправление на главную страницу...")
-                    return redirect('main')
+                    return redirect('profile')
                 else:
                     messages.error(request, 'Ошибка аутентификации. Попробуйте войти вручную.')
                     print("Ошибка аутентификации")

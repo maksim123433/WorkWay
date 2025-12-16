@@ -6,14 +6,7 @@ import json
 
 class CustomUserCreationForm(forms.ModelForm):
     """Единая форма для регистрации со ВСЕМИ полями"""
-    confirm_email = forms.EmailField(
-        required=True,
-        label='Подтверждение email',
-        widget=forms.EmailInput(attrs={
-            'placeholder': 'Повторите email',
-            'class': 'form-control'
-        })
-    )
+
 
     # Поля пароля
     password1 = forms.CharField(
@@ -37,7 +30,7 @@ class CustomUserCreationForm(forms.ModelForm):
     )
 
     # Поле для previous_positions (JSON)
-    previous_positions_json = forms.CharField(
+    previous_positions = forms.CharField(
         required=False,
         widget=forms.HiddenInput(attrs={'id': 'previous_positions'}),
         label='',
@@ -187,7 +180,7 @@ class CustomUserCreationForm(forms.ModelForm):
         profile.is_active = True
 
         # Обрабатываем previous_positions из JSON
-        previous_positions_json = self.cleaned_data.get('previous_positions_json', '[]')
+        previous_positions_json = self.cleaned_data.get('previous_positions', '[]')
         try:
             if previous_positions_json:
                 positions_data = json.loads(previous_positions_json)
@@ -202,6 +195,7 @@ class CustomUserCreationForm(forms.ModelForm):
                             'description': pos.get('description', ''),
                             'order': i
                         })
+                        print(formatted_positions,'----------------------------------------------')
                 profile.previous_positions = formatted_positions
                 print(f"Сохраняем {len(formatted_positions)} предыдущих должностей")
         except (json.JSONDecodeError, TypeError) as e:

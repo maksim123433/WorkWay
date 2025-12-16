@@ -82,9 +82,6 @@ class Profile(AbstractUser):
     skills = models.TextField('Ключевые навыки', blank=True, null=True)
     education = models.TextField('Образование', blank=True, null=True)
 
-    # Старое поле (можно оставить для обратной совместимости)
-    previous_work = models.TextField('Ранее занимаемые должности', blank=True, null=True)
-
     # Новые структурированные данные о предыдущих должностях
     previous_positions = models.JSONField(
         'Ранее занимаемые должности',
