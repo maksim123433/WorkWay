@@ -133,8 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 case 'edit':
                     alert('Редактирование вакансии ' + vacancyId);
                     break;
-                case 'view':
-                    alert('Просмотр вакансии ' + vacancyId);
+                case 'view'
                     break;
                 case 'applications':
                     alert('Просмотр откликов на вакансию ' + vacancyId);
@@ -288,3 +287,206 @@ document.addEventListener('DOMContentLoaded', function() {
     // Инициализация
     loadDraft();
 });
+// Просмотр деталей вакансии
+function showVacancyDetails(vacancyId) {
+    console.log('Opening vacancy details for ID:', vacancyId);
+
+    // Устанавливаем заголовок сразу
+    document.getElementById('modalTitle').textContent = 'Загрузка...';
+    document.getElementById('modalBody').innerHTML = `
+        <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Загрузка информации о вакансии...</p>
+        </div>
+    `;
+
+    // Показываем модальное окно
+    document.getElementById('vacancyModal').style.display = 'block';
+
+    // Формируем URL
+    const url = `/employer/vacancy/${vacancyId}/details/`;
+    console.log('Fetching URL:', url);
+
+    // Получаем CSRF токен
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+    // Отправляем запрос
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            ...(csrfToken && {'X-CSRFToken': csrfToken})
+        }
+    })
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Received data:', data);
+
+        if (data.error) {
+            throw new Error(data.error);
+        }
+
+        // Проверяем наличие данных
+        if (!data || !data.title) {
+            throw new Error('Данные вакансии не получены');
+        }
+
+        // Обновляем заголовок
+        document.getElementById('modalTitle').textContent = data.title;
+
+        // Форматируем данные
+        const formatText = (text) => {
+            if (!text || text === 'None') return 'Не указано';
+            return text.toString().replace(/\n/g, '<br>');
+        };
+
+        // Рендерим содержимое
+        document.getElementById('modalBody').innerHTML = `
+            <div class="vacancy-details">
+                <!-- Основная информация -->
+                <div class="detail-section">
+                    <h4><i class="fas fa-info-circle"></i> Основная информация</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <strong>Местоположение:</strong>
+                            <span>${formatText(data.location)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Тип занятости:</strong>
+                            <span>${formatText(data.employment_type)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Зарплата:</strong>
+                            <span>${formatText(data.salary)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Требуемый опыт:</strong>
+                            <span>${formatText(data.experience)}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Описание -->
+                <div class="detail-section">
+                    <h4><i class="fas fa-file-alt"></i> Описание вакансии</h4>
+                    <div class="detail-content">${formatText(data.description)}</div>
+                </div>
+
+                <!-- Требования -->
+                ${data.requirements && data.requirements !== 'None' ? `
+                <div class="detail-section">
+                    <h4><i class="fas fa-list-check"></i> Требования</h4>
+                    <div class="detail-content">${formatText(data.requirements)}</div>
+                </div>
+                ` : ''}
+
+                <!-- Условия -->
+                ${data.benefits && data.benefits !== 'None' ? `
+                <div class="detail-section">
+                    <h4><i class="fas fa-gift"></i> Мы предлагаем</h4>
+                    <div class="detail-content">${formatText(data.benefits)}</div>
+                </div>
+                ` : ''}
+
+                <!-- Навыки -->
+                ${data.skills && data.skills !== 'None' ? `
+                <div class="detail-section">
+                    <h4><i class="fas fa-tools"></i> Ключевые навыки</h4>
+                    <div class="detail-content">${formatText(data.skills)}</div>
+                </div>
+                ` : ''}
+
+                <!-- Контакты -->
+                <div class="detail-section">
+                    <h4><i class="fas fa-address-book"></i> Контакты</h4>
+                    <div class="detail-grid">
+                        ${data.contact_person && data.contact_person !== 'None' ? `
+                        <div class="detail-item">
+                            <strong>Контактное лицо:</strong>
+                            <span>${data.contact_person}</span>
+                        </div>
+                        ` : ''}
+
+                        ${data.contact_email && data.contact_email !== 'None' ? `
+                        <div class="detail-item">
+                            <strong>Email:</strong>
+                            <span><a href="mailto:${data.contact_email}">${data.contact_email}</a></span>
+                        </div>
+                        ` : ''}
+
+                        ${data.contact_phone && data.contact_phone !== 'None' ? `
+                        <div class="detail-item">
+                            <strong>Телефон:</strong>
+                            <span><a href="tel:${data.contact_phone}">${data.contact_phone}</a></span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                <!-- Статистика -->
+                <div class="detail-section">
+                    <h4><i class="fas fa-chart-bar"></i> Статистика</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <strong>Просмотры:</strong>
+                            <span>${data.views_count || 0}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Отклики:</strong>
+                            <span>${data.applications_count || 0}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Создана:</strong>
+                            <span>${data.created_at || 'Не указано'}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Обновлена:</strong>
+                            <span>${data.updated_at || 'Не указано'}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Статусы -->
+                <div class="detail-section">
+                    <h4><i class="fas fa-tags"></i> Статусы</h4>
+                    <div class="tags-container">
+                        ${data.is_active ?
+                            '<span class="status-tag active"><i class="fas fa-check-circle"></i> Активная</span>' :
+                            '<span class="status-tag inactive"><i class="fas fa-pause-circle"></i> Неактивная</span>'
+                        }
+                        ${data.is_featured ?
+                            '<span class="status-tag featured"><i class="fas fa-star"></i> Рекомендуемая</span>' :
+                            ''
+                        }
+                        ${data.is_urgent ?
+                            '<span class="status-tag urgent"><i class="fas fa-fire"></i> Срочная</span>' :
+                            ''
+                        }
+                    </div>
+                </div>
+            </div>
+        `;
+    })
+    .catch(error => {
+        console.error('Error fetching vacancy details:', error);
+        document.getElementById('modalTitle').textContent = 'Ошибка';
+        document.getElementById('modalBody').innerHTML = `
+            <div class="error-state">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h5>Не удалось загрузить данные</h5>
+                <p>${error.message}</p>
+                <p>ID вакансии: ${vacancyId}</p>
+                <button onclick="showVacancyDetails(${vacancyId})" class="btn-retry">
+                    <i class="fas fa-redo"></i> Попробовать снова
+                </button>
+            </div>
+        `;
+    });
+}

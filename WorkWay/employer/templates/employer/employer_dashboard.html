@@ -1,5 +1,7 @@
 {% load static %}
+{% load crispy_forms_tags %}
 
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -8,6 +10,7 @@
     <link rel="stylesheet" href="{% static 'css/employer.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>
 <body>
     <!-- Градиентные волны -->
@@ -28,75 +31,62 @@
                         <i class="fas fa-user-tie"></i>
                     </div>
                     <div class="user-details">
-                        <span class="user-name">{{ user.company_name }}</span>
+                        <span class="user-name">{{ user.company_name|default:user.username }}</span>
                         <span class="user-role">Работодатель</span>
                     </div>
-                    <button class="logout-btn" title="Выйти">
+                    <a href="" class="logout-btn" title="Выйти">
                         <i class="fas fa-sign-out-alt"></i>
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>
     </nav>
 
     <div class="dashboard-container">
-        <!-- Боковая панель с быстрыми действиями -->
+        <!-- Боковая панель -->
         <aside class="sidebar">
             <div class="quick-actions-sidebar">
                 <h3><i class="fas fa-bolt"></i> Быстрые действия</h3>
 
-                <div class="sidebar-action-card" id="quickCreateVacancy">
+                <div class="sidebar-action-card" onclick="showCreateForm()">
                     <div class="action-icon">
                         <i class="fas fa-plus-circle"></i>
                     </div>
                     <h4>Новая вакансия</h4>
                     <p>Создайте новую вакансию для поиска сотрудников</p>
-                    <button class="btn-quick">
+                    <div class="btn-quick">
                         <i class="fas fa-plus"></i>
                         <span>Создать</span>
-                    </button>
+                    </div>
                 </div>
 
-                <div class="sidebar-action-card" id="quickSearch">
+                <div class="sidebar-action-card">
                     <div class="action-icon">
                         <i class="fas fa-search"></i>
                     </div>
                     <h4>Поиск кандидатов</h4>
                     <p>Найдите подходящих кандидатов по базе резюме</p>
-                    <button class="btn-quick">
+                    <div class="btn-quick">
                         <i class="fas fa-search"></i>
                         <span>Найти</span>
-                    </button>
+                    </div>
                 </div>
 
-                <div class="sidebar-action-card" id="quickViewResponses">
+                <div class="sidebar-action-card">
                     <div class="action-icon">
                         <i class="fas fa-envelope-open"></i>
                     </div>
                     <h4>Новые отклики</h4>
                     <p>Просмотр новых откликов на вакансии ({{ new_responses }})</p>
-                    <button class="btn-quick">
+                    <div class="btn-quick">
                         <i class="fas fa-eye"></i>
                         <span>Просмотреть</span>
-                    </button>
-                </div>
-
-                <div class="sidebar-action-card" id="quickSchedule">
-                    <div class="action-icon">
-                        <i class="fas fa-calendar-alt"></i>
                     </div>
-                    <h4>Назначить собеседование</h4>
-                    <p>Запланировать встречу с кандидатом</p>
-                    <button class="btn-quick">
-                        <i class="fas fa-calendar-plus"></i>
-                        <span>Назначить</span>
-                    </button>
                 </div>
             </div>
 
             <div class="sidebar-stats">
                 <h3><i class="fas fa-chart-bar"></i> Статистика</h3>
-
                 <div class="stats-grid">
                     <div class="stat-item">
                         <span class="stat-value">{{ active_vacancies }}</span>
@@ -107,12 +97,8 @@
                         <span class="stat-label">Всего откликов</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-value">{{ interviews_scheduled }}</span>
-                        <span class="stat-label">Собеседований</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-value">{{ hired_candidates }}</span>
-                        <span class="stat-label">Нанято</span>
+                        <span class="stat-value">{{ vacancies_count }}</span>
+                        <span class="stat-label">Всего вакансий</span>
                     </div>
                 </div>
             </div>
@@ -123,27 +109,222 @@
             <!-- Заголовок и кнопка -->
             <div class="content-header">
                 <h1>Управление вакансиями</h1>
-                <button class="btn-primary" id="createVacancyBtn">
+                <button class="btn-primary" onclick="showCreateForm()">
                     <i class="fas fa-plus"></i>
                     <span>Создать вакансию</span>
                 </button>
             </div>
 
+            <!-- Форма поиска (упрощенная, без сортировки) -->
+            <div class="search-section">
+                <form method="GET" class="search-form">
+                    <div class="search-input-group">
+                        <i class="fas fa-search"></i>
+                        {{ search_form.search }}
+                        <button type="submit" class="search-btn ok">
+                            <i class="fas fa-search notok"></i>
+                        </button>
+                    </div>
+
+                    <div class="search-filters">
+                        <div class="filter-group">
+                            {{ search_form.status|as_crispy_field }}
+                        </div>
+                        <button type="submit" class="btn-filter">
+                            <i class="fas fa-filter"></i>
+                            Применить фильтры
+                        </button>
+                        {% if request.GET.search or request.GET.status %}
+                        <a href="{% url 'employer_pro' %}" class="btn-secondary">
+                            <i class="fas fa-times"></i>
+                            Сбросить
+                        </a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+
+            <!-- Сообщения -->
+            {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- Форма создания вакансии (изначально скрыта) -->
+            <section class="create-vacancy-section" id="createVacancySection" style="display: none;">
+                <div class="form-header">
+                    <h2><i class="fas fa-plus-circle"></i> Создание новой вакансии</h2>
+                    <p>Заполните форму, чтобы опубликовать вакансию</p>
+                    <button class="btn-close-form" onclick="hideCreateForm()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <form id="vacancyCreateForm" method="POST" class="vacancy-form-ajax">
+                    {% csrf_token %}
+
+                    <div class="form-tabs">
+                        <button type="button" class="tab-btn active" data-tab="basic">Основное</button>
+                        <button type="button" class="tab-btn" data-tab="salary">Зарплата</button>
+                        <button type="button" class="tab-btn" data-tab="description">Описание</button>
+                        <button type="button" class="tab-btn" data-tab="requirements">Требования</button>
+                        <button type="button" class="tab-btn" data-tab="contacts">Контакты</button>
+                    </div>
+
+                    <div class="tab-content active" id="tab-basic">
+                        <div class="form-row">
+                            <div class="form-group">
+                                {{ form.title|as_crispy_field }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.category|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                {{ form.location|as_crispy_field }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.employment_type|as_crispy_field }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="tab-salary">
+                        <div class="form-row">
+                            <div class="form-group">
+                                {{ form.salary_min|as_crispy_field }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.salary_max|as_crispy_field }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.currency|as_crispy_field }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="tab-description">
+                        <div class="form-group">
+                            {{ form.description|as_crispy_field }}
+                            <div class="char-counter">
+                                <span id="charCount">0</span>/5000 символов
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="tab-requirements">
+                        <div class="form-row">
+                            <div class="form-group">
+                                {{ form.experience|as_crispy_field }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.education|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.requirements|as_crispy_field }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.benefits|as_crispy_field }}
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.skills|as_crispy_field }}
+                        </div>
+                    </div>
+
+                    <div class="tab-content" id="tab-contacts">
+                        <div class="form-row">
+                            <div class="form-group">
+                                {{ form.contact_person|as_crispy_field }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.contact_email|as_crispy_field }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.contact_phone|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="form-checkboxes">
+                            <label class="checkbox-label">
+                                {{ form.is_active }}
+                                <span class="checkmark"></span>
+                                {{ form.is_active.label }}
+                            </label>
+
+                            <label class="checkbox-label">
+                                {{ form.is_featured }}
+                                <span class="checkmark"></span>
+                                {{ form.is_featured.label }}
+                            </label>
+
+                            <label class="checkbox-label">
+                                {{ form.is_urgent }}
+                                <span class="checkmark"></span>
+                                {{ form.is_urgent.label }}
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="hideCreateForm()">
+                            <i class="fas fa-times"></i>
+                            <span>Отмена</span>
+                        </button>
+                        <button type="submit" class="btn-success pip">
+                            <i class="fas fa-check"></i>
+                            <span>Опубликовать вакансию</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
             <!-- Список вакансий -->
-            <section class="vacancies-section">
-                <h2>Мои вакансии</h2>
-                <p class="section-subtitle">Всего: {{ vacancies_count }} активных вакансий</p>
+            <section class="vacancies-section" id="vacanciesList">
+                <div class="section-header">
+                    <h2>Мои вакансии</h2>
+                    <p class="section-subtitle">Всего: {{ vacancies_count }} вакансий</p>
+                </div>
 
                 {% if vacancies %}
                 <div class="vacancies-list">
                     {% for vacancy in vacancies %}
-                    <div class="vacancy-card" data-id="{{ vacancy.id }}">
+                    <div class="vacancy-card" id="vacancy-{{ vacancy.id }}">
                         <div class="vacancy-header">
                             <div class="vacancy-title-row">
                                 <h3>{{ vacancy.title }}</h3>
-                                <span class="vacancy-status {% if vacancy.is_active %}status-active{% else %}status-inactive{% endif %}">
-                                    {% if vacancy.is_active %}Активна{% else %}Неактивна{% endif %}
-                                </span>
+                                <div class="vacancy-badges">
+                                    {% if vacancy.is_featured %}
+                                    <span class="badge badge-featured">
+                                        <i class="fas fa-star"></i>
+                                        Рекомендуемая
+                                    </span>
+                                    {% endif %}
+                                    {% if vacancy.is_urgent %}
+                                    <span class="badge badge-urgent">
+                                        <i class="fas fa-fire"></i>
+                                        Срочная
+                                    </span>
+                                    {% endif %}
+                                    <span class="vacancy-status {% if vacancy.is_active %}status-active{% else %}status-inactive{% endif %}">
+                                        {% if vacancy.is_active %}
+                                            <i class="fas fa-check-circle"></i> Активна
+                                        {% else %}
+                                            <i class="fas fa-pause-circle"></i> Неактивна
+                                        {% endif %}
+                                    </span>
+                                </div>
                             </div>
                             <div class="vacancy-meta">
                                 <span class="meta-item">
@@ -152,7 +333,7 @@
                                 </span>
                                 <span class="meta-item">
                                     <i class="fas fa-money-bill-wave"></i>
-                                    {{ vacancy.salary }}
+                                    {{ vacancy.get_salary_display }}
                                 </span>
                                 <span class="meta-item">
                                     <i class="fas fa-clock"></i>
@@ -164,39 +345,62 @@
                         <div class="vacancy-body">
                             <p class="vacancy-description">{{ vacancy.description|truncatechars:150 }}</p>
 
+                            {% if vacancy.skills %}
+                            <div class="vacancy-skills">
+                                {% for skill in vacancy.get_skills_list|slice:":5" %}
+                                <span class="skill-tag">{{ skill }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
                             <div class="vacancy-stats">
                                 <div class="stat">
                                     <i class="fas fa-eye"></i>
-                                    <span>{{ vacancy.views }} просмотров</span>
+                                    <span>{{ vacancy.views_count }} просмотров</span>
                                 </div>
                                 <div class="stat">
                                     <i class="fas fa-paper-plane"></i>
-                                    <span>{{ vacancy.applications }} откликов</span>
+                                    <span>{{ vacancy.applications_count }} откликов</span>
                                 </div>
                                 <div class="stat">
-                                    <i class="fas fa-user-check"></i>
-                                    <span>{{ vacancy.interviews }} собеседований</span>
+                                    <i class="fas fa-briefcase"></i>
+                                    <span>{{ vacancy.get_experience_display_short }}</span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="vacancy-actions">
-                            <button class="btn-action btn-view" data-id="{{ vacancy.id }}">
+                            <!-- Просмотр -->
+                            <button class="btn-action btn-view" onclick="showVacancyDetails({{ vacancy.id }})">
                                 <i class="fas fa-eye"></i>
                                 <span>Просмотр</span>
                             </button>
-                            <button class="btn-action btn-edit" data-id="{{ vacancy.id }}">
+
+                            <!-- Редактировать -->
+                            <button class="btn-action btn-edit" onclick="editVacancy({{ vacancy.id }})">
                                 <i class="fas fa-edit"></i>
                                 <span>Редактировать</span>
                             </button>
-                            <button class="btn-action btn-applications" data-id="{{ vacancy.id }}">
+
+                            <!-- Отклики -->
+                            <button class="btn-action btn-applications">
                                 <i class="fas fa-users"></i>
-                                <span>Отклики ({{ vacancy.applications }})</span>
+                                <span>Отклики ({{ vacancy.applications_count }})</span>
                             </button>
-                            <button class="btn-action btn-{% if vacancy.is_active %}pause{% else %}activate{% endif %}" data-id="{{ vacancy.id }}">
+
+                            <!-- Статус -->
+                            <button class="btn-action btn-{% if vacancy.is_active %}pause{% else %}activate{% endif %}"
+                                    onclick="toggleVacancyStatus({{ vacancy.id }})">
                                 <i class="fas fa-{% if vacancy.is_active %}pause{% else %}play{% endif %}"></i>
                                 <span>{% if vacancy.is_active %}Приостановить{% else %}Активировать{% endif %}</span>
                             </button>
+
+                            <!-- УДАЛИТЬ - красная кнопка -->
+                            <button class="btn-action btn-delete" onclick="deleteVacancy({{ vacancy.id }})">
+                                <i class="fas fa-trash"></i>
+                                <span>Удалить</span>
+                            </button>
+                        </div>
                         </div>
                     </div>
                     {% endfor %}
@@ -206,186 +410,480 @@
                     <i class="fas fa-file-alt"></i>
                     <h3>У вас пока нет вакансий</h3>
                     <p>Создайте первую вакансию, чтобы начать поиск сотрудников</p>
-                    <button class="btn-primary" id="createFirstVacancyBtn">
+                    <button class="btn-primary" onclick="showCreateForm()">
                         <i class="fas fa-plus"></i>
                         <span>Создать первую вакансию</span>
                     </button>
                 </div>
                 {% endif %}
             </section>
-
-            <!-- Форма создания вакансии (скрыта по умолчанию) -->
-            <section class="create-vacancy-section" id="createVacancyForm">
-                <div class="form-header">
-                    <h2><i class="fas fa-plus-circle"></i> Создание новой вакансии</h2>
-                    <p>Заполните форму, чтобы опубликовать вакансию</p>
-                </div>
-
-                <form id="vacancyForm" method="POST">
-                    {% csrf_token %}
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="title">
-                                <i class="fas fa-heading"></i>
-                                Название должности *
-                            </label>
-                            <input type="text" id="title" name="title" class="form-input" required
-                                   placeholder="Например: Python разработчик">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="category">
-                                <i class="fas fa-tag"></i>
-                                Категория *
-                            </label>
-                            <select id="category" name="category" class="form-select" required>
-                                <option value="">Выберите категорию</option>
-                                <option value="it">IT и программирование</option>
-                                <option value="design">Дизайн и творчество</option>
-                                <option value="marketing">Маркетинг и реклама</option>
-                                <option value="sales">Продажи и обслуживание</option>
-                                <option value="management">Управление и менеджмент</option>
-                                <option value="finance">Финансы и бухгалтерия</option>
-                                <option value="other">Другое</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="location">
-                                <i class="fas fa-map-marker-alt"></i>
-                                Местоположение *
-                            </label>
-                            <input type="text" id="location" name="location" class="form-input" required
-                                   placeholder="Например: Москва, удалённо">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="employment_type">
-                                <i class="fas fa-briefcase"></i>
-                                Тип занятости *
-                            </label>
-                            <select id="employment_type" name="employment_type" class="form-select" required>
-                                <option value="">Выберите тип</option>
-                                <option value="full">Полная занятость</option>
-                                <option value="part">Частичная занятость</option>
-                                <option value="project">Проектная работа</option>
-                                <option value="internship">Стажировка</option>
-                                <option value="remote">Удалённая работа</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="salary_min">
-                                <i class="fas fa-money-bill-wave"></i>
-                                Зарплата (от)
-                            </label>
-                            <input type="number" id="salary_min" name="salary_min" class="form-input"
-                                   placeholder="Минимальная зарплата">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="salary_max">
-                                <i class="fas fa-money-bill-wave"></i>
-                                Зарплата (до)
-                            </label>
-                            <input type="number" id="salary_max" name="salary_max" class="form-input"
-                                   placeholder="Максимальная зарплата">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="currency">
-                                <i class="fas fa-ruble-sign"></i>
-                                Валюта
-                            </label>
-                            <select id="currency" name="currency" class="form-select">
-                                <option value="RUB">₽ Рубли</option>
-                                <option value="USD">$ Доллары</option>
-                                <option value="EUR">€ Евро</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="description">
-                            <i class="fas fa-file-alt"></i>
-                            Описание вакансии *
-                        </label>
-                        <textarea id="description" name="description" class="form-textarea" rows="8" required
-                                  placeholder="Опишите должностные обязанности, требования к кандидату, условия работы..."></textarea>
-                        <div class="char-counter">
-                            <span id="charCount">0</span>/5000 символов
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="requirements">
-                            <i class="fas fa-list-check"></i>
-                            Требования к кандидату
-                        </label>
-                        <textarea id="requirements" name="requirements" class="form-textarea" rows="4"
-                                  placeholder="Опыт работы, навыки, образование..."></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="benefits">
-                            <i class="fas fa-gift"></i>
-                            Мы предлагаем
-                        </label>
-                        <textarea id="benefits" name="benefits" class="form-textarea" rows="4"
-                                  placeholder="Условия работы, бонусы, льготы..."></textarea>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="experience">
-                                <i class="fas fa-chart-line"></i>
-                                Требуемый опыт
-                            </label>
-                            <select id="experience" name="experience" class="form-select">
-                                <option value="">Не имеет значения</option>
-                                <option value="no">Без опыта</option>
-                                <option value="1-3">1-3 года</option>
-                                <option value="3-5">3-5 лет</option>
-                                <option value="5+">Более 5 лет</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="education">
-                                <i class="fas fa-graduation-cap"></i>
-                                Образование
-                            </label>
-                            <select id="education" name="education" class="form-select">
-                                <option value="">Не имеет значения</option>
-                                <option value="secondary">Среднее</option>
-                                <option value="specialized">Среднее специальное</option>
-                                <option value="higher">Высшее</option>
-                                <option value="bachelor">Бакалавр</option>
-                                <option value="master">Магистр</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="button" class="btn-secondary" id="cancelBtn">
-                            <i class="fas fa-times"></i>
-                            <span>Отмена</span>
-                        </button>
-                        <button type="submit" class="btn-success">
-                            <i class="fas fa-check"></i>
-                            <span>Опубликовать вакансию</span>
-                        </button>
-                    </div>
-                </form>
-            </section>
         </main>
     </div>
 
+    <!-- Модальное окно для просмотра вакансии -->
+    <div id="vacancyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle"></h3>
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Контент загружается через AJAX -->
+            </div>
+        </div>
+    </div>
+
     <script src="{% static 'js/employer.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Текущая редактируемая вакансия
+        let editingVacancyId = null;
+
+        // Показать форму создания
+        function showCreateForm() {
+            document.getElementById('createVacancySection').style.display = 'block';
+            document.getElementById('vacanciesList').style.display = 'none';
+            document.querySelector('.search-section').style.display = 'none';
+            resetCreateForm();
+            scrollToTop();
+        }
+
+        // Скрыть форму создания
+        function hideCreateForm() {
+            document.getElementById('createVacancySection').style.display = 'none';
+            document.getElementById('vacanciesList').style.display = 'block';
+            document.querySelector('.search-section').style.display = 'block';
+        }
+
+        // Сбросить форму создания
+        function resetCreateForm() {
+            document.getElementById('vacancyCreateForm').reset();
+            editingVacancyId = null;
+            document.querySelector('.form-header h2').innerHTML = '<i class="fas fa-plus-circle"></i> Создание новой вакансии';
+            document.querySelector('.form-header p').textContent = 'Заполните форму, чтобы опубликовать вакансию';
+            document.querySelector('.btn-success span').textContent = 'Опубликовать вакансию';
+            showTab('basic');
+        }
+
+        // Управление вкладками формы
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const tabId = this.getAttribute('data-tab');
+                showTab(tabId);
+            });
+        });
+
+        function showTab(tabId) {
+            // Скрыть все вкладки
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Показать выбранную вкладку
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+        }
+
+        // Счетчик символов
+        const descriptionField = document.getElementById('id_description');
+        if (descriptionField) {
+            descriptionField.addEventListener('input', function() {
+                document.getElementById('charCount').textContent = this.value.length;
+            });
+        }
+
+        // AJAX отправка формы
+        document.getElementById('vacancyCreateForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('.btn-success');
+            const originalText = submitBtn.innerHTML;
+
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Сохранение...</span>';
+            submitBtn.disabled = true;
+
+            fetch('{% url "employer_pro" %}', {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Успешно!',
+                        text: data.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+
+                    setTimeout(() => {
+                        location.reload();
+                    }, 2000);
+                } else {
+                    showFormErrors(data.errors);
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Ошибка',
+                    text: 'Произошла ошибка при сохранении'
+                });
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        });
+
+        // Показать ошибки формы
+        function showFormErrors(errors) {
+            // Сначала скрыть все ошибки
+            document.querySelectorAll('.error-message').forEach(el => el.remove());
+            document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(el => {
+                el.classList.remove('error');
+            });
+
+            // Показать новые ошибки
+            for (const field in errors) {
+                const input = document.getElementById(`id_${field}`);
+                if (input) {
+                    input.classList.add('error');
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'error-message';
+                    errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${errors[field][0]}`;
+                    input.parentNode.appendChild(errorDiv);
+                }
+            }
+        }
+
+        // Просмотр деталей вакансии
+        function showVacancyDetails(vacancyId) {
+            fetch(`/employer/vacancy/${vacancyId}/details/`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('modalTitle').textContent = data.title;
+                document.getElementById('modalBody').innerHTML = `
+                    <div class="vacancy-details">
+                        <div class="detail-section">
+                            <h4><i class="fas fa-info-circle"></i> Основная информация</h4>
+                            <div class="detail-grid">
+                                <div class="detail-item">
+                                    <span class="detail-label">Местоположение:</span>
+                                    <span class="detail-value">${data.location}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Тип занятости:</span>
+                                    <span class="detail-value">${data.employment_type}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Зарплата:</span>
+                                    <span class="detail-value">${data.salary}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Требуемый опыт:</span>
+                                    <span class="detail-value">${data.experience}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-section">
+                            <h4><i class="fas fa-file-alt"></i> Описание</h4>
+                            <div class="detail-content">${data.description}</div>
+                        </div>
+
+                        ${data.requirements ? `
+                        <div class="detail-section">
+                            <h4><i class="fas fa-list-check"></i> Требования</h4>
+                            <div class="detail-content">${data.requirements}</div>
+                        </div>
+                        ` : ''}
+
+                        ${data.benefits ? `
+                        <div class="detail-section">
+                            <h4><i class="fas fa-gift"></i> Мы предлагаем</h4>
+                            <div class="detail-content">${data.benefits}</div>
+                        </div>
+                        ` : ''}
+
+                        ${data.skills ? `
+                        <div class="detail-section">
+                            <h4><i class="fas fa-tools"></i> Навыки</h4>
+                            <div class="detail-content">${data.skills}</div>
+                        </div>
+                        ` : ''}
+
+                        <div class="detail-section">
+                            <h4><i class="fas fa-chart-bar"></i> Статистика</h4>
+                            <div class="detail-grid">
+                                <div class="detail-item">
+                                    <span class="detail-label">Просмотры:</span>
+                                    <span class="detail-value">${data.views_count}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Отклики:</span>
+                                    <span class="detail-value">${data.applications_count}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Создана:</span>
+                                    <span class="detail-value">${data.created_at}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Обновлена:</span>
+                                    <span class="detail-value">${data.updated_at}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-section">
+                            <h4><i class="fas fa-address-book"></i> Контакты</h4>
+                            <div class="detail-grid">
+                                <div class="detail-item">
+                                    <span class="detail-label">Контактное лицо:</span>
+                                    <span class="detail-value">${data.contact_person || 'Не указано'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Email:</span>
+                                    <span class="detail-value">${data.contact_email || 'Не указано'}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Телефон:</span>
+                                    <span class="detail-value">${data.contact_phone || 'Не указано'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('vacancyModal').style.display = 'block';
+            });
+        }
+
+        // Редактирование вакансии
+        function editVacancy(vacancyId) {
+            showCreateForm();
+            editingVacancyId = vacancyId;
+
+            // Загружаем данные вакансии
+            fetch(`/employer/vacancy/${vacancyId}/details/`)
+            .then(response => response.json())
+            .then(vacancyData => {
+                // Заполняем форму данными
+                document.getElementById('id_title').value = vacancyData.title;
+                document.getElementById('id_location').value = vacancyData.location;
+                document.getElementById('id_description').value = vacancyData.description;
+
+                // Заполняем Select поля (нужно добавить логику для остальных полей)
+                document.querySelector('.form-header h2').innerHTML = '<i class="fas fa-edit"></i> Редактирование вакансии';
+                document.querySelector('.form-header p').textContent = 'Внесите изменения и сохраните';
+                document.querySelector('.btn-success span').textContent = 'Сохранить изменения';
+
+                // Обновляем счетчик символов
+                document.getElementById('charCount').textContent = vacancyData.description.length;
+            });
+        }
+
+        // Изменение статуса вакансии
+        function toggleVacancyStatus(vacancyId) {
+            Swal.fire({
+                title: 'Изменить статус?',
+                text: 'Вы уверены, что хотите изменить статус вакансии?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Да, изменить',
+                cancelButtonText: 'Отмена'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/employer/vacancy/${vacancyId}/toggle/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Обновляем UI без перезагрузки
+                            const vacancyCard = document.getElementById(`vacancy-${vacancyId}`);
+                            const statusBadge = vacancyCard.querySelector('.vacancy-status');
+                            const toggleBtn = vacancyCard.querySelector('.btn-action.btn-pause, .btn-action.btn-activate');
+
+                            if (data.is_active) {
+                                statusBadge.className = 'vacancy-status status-active';
+                                statusBadge.innerHTML = '<i class="fas fa-check-circle"></i> Активна';
+                                toggleBtn.className = 'btn-action btn-pause';
+                                toggleBtn.innerHTML = '<i class="fas fa-pause"></i><span>Приостановить</span>';
+                            } else {
+                                statusBadge.className = 'vacancy-status status-inactive';
+                                statusBadge.innerHTML = '<i class="fas fa-pause-circle"></i> Неактивна';
+                                toggleBtn.className = 'btn-action btn-activate';
+                                toggleBtn.innerHTML = '<i class="fas fa-play"></i><span>Активировать</span>';
+                            }
+
+                            // Показываем уведомление
+                            showNotification(data.message, 'success');
+                        }
+                    });
+                }
+            });
+        }
+
+        // Удаление вакансии
+        function deleteVacancy(vacancyId) {
+            Swal.fire({
+                title: 'Удалить вакансию?',
+                text: 'Вы уверены, что хотите удалить вакансию? Это действие нельзя отменить.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Да, удалить',
+                cancelButtonText: 'Отмена',
+                confirmButtonColor: '#dc3545'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/employer/vacancy/${vacancyId}/delete/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Удаляем карточку из DOM
+                            const vacancyCard = document.getElementById(`vacancy-${vacancyId}`);
+                            if (vacancyCard) {
+                                vacancyCard.style.opacity = '0';
+                                setTimeout(() => {
+                                    vacancyCard.remove();
+                                    // Обновляем счетчик вакансий
+                                    updateVacanciesCount(-1);
+                                }, 300);
+                            }
+
+                            // Показываем уведомление
+                            showNotification(data.message, 'success');
+                        }
+                    });
+                }
+            });
+        }
+
+        // Дублирование вакансии
+        function duplicateVacancy(vacancyId) {
+            Swal.fire({
+                title: 'Дублировать вакансию?',
+                text: 'Создать копию этой вакансии?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Да, дублировать',
+                cancelButtonText: 'Отмена'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/employer/vacancy/${vacancyId}/duplicate/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Успешно!',
+                                text: data.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                location.reload();
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        // Обновление счетчика вакансий
+        function updateVacanciesCount(change) {
+            const countElement = document.querySelector('.section-subtitle');
+            if (countElement) {
+                const currentText = countElement.textContent;
+                const currentMatch = currentText.match(/(\d+)/);
+                if (currentMatch) {
+                    const currentCount = parseInt(currentMatch[0]);
+                    const newCount = currentCount + change;
+                    countElement.textContent = `Всего: ${newCount} вакансий`;
+                }
+            }
+        }
+
+        // Показать уведомление
+        function showNotification(message, type = 'info') {
+            // Используем SweetAlert для уведомлений
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+
+            Toast.fire({
+                icon: type,
+                title: message
+            });
+        }
+
+        // Закрыть модальное окно
+        function closeModal() {
+            document.getElementById('vacancyModal').style.display = 'none';
+        }
+
+        // Закрыть модальное окно при клике вне его
+        window.onclick = function(event) {
+            const modal = document.getElementById('vacancyModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Прокрутка к верху
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация счетчика символов
+            const descriptionField = document.getElementById('id_description');
+            if (descriptionField) {
+                document.getElementById('charCount').textContent = descriptionField.value.length;
+            }
+
+            // Автоматическое скрытие сообщений
+            setTimeout(() => {
+                document.querySelectorAll('.alert').forEach(alert => {
+                    alert.style.opacity = '0';
+                    setTimeout(() => alert.remove(), 300);
+                });
+            }, 5000);
+        });
+    </script>
 </body>
 </html>

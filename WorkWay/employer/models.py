@@ -256,69 +256,69 @@ class Vacancy(models.Model):
             return timezone.now() > self.expires_at
         return False
 
-#
-# class Application(models.Model):
-#     """Модель отклика на вакансию"""
-#     vacancy = models.ForeignKey(
-#         Vacancy,
-#         on_delete=models.CASCADE,
-#         related_name='applications',
-#         verbose_name="Вакансия"
-#     )
-#
-#     # Используйте AUTH_USER_MODEL
-#     applicant = models.ForeignKey(
-#         settings.AUTH_USER_MODEL,  # Изменено здесь
-#         on_delete=models.CASCADE,
-#         related_name='applications',
-#         verbose_name="Соискатель"
-#     )
-#
-#     cover_letter = models.TextField(
-#         verbose_name="Сопроводительное письмо",
-#         blank=True
-#     )
-#     resume_file = models.FileField(
-#         upload_to='resumes/%Y/%m/%d/',
-#         null=True,
-#         blank=True,
-#         verbose_name="Файл резюме"
-#     )
-#
-#     # Статус отклика
-#     STATUS_CHOICES = [
-#         ('new', 'Новый'),
-#         ('reviewed', 'Просмотрено'),
-#         ('invited', 'Приглашён на собеседование'),
-#         ('rejected', 'Отклонено'),
-#         ('accepted', 'Принято'),
-#     ]
-#     status = models.CharField(
-#         max_length=20,
-#         choices=STATUS_CHOICES,
-#         default='new',
-#         verbose_name="Статус"
-#     )
-#
-#     # Метаданные
-#     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата отклика")
-#     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
-#
-#     class Meta:
-#         verbose_name = "Отклик"
-#         verbose_name_plural = "Отклики"
-#         unique_together = ['vacancy', 'applicant']
-#         ordering = ['-created_at']
-#
-#     def __str__(self):
-#         return f"{self.applicant.username} → {self.vacancy.title}"
-#
-#     def save(self, *args, **kwargs):
-#         """При сохранении нового отклика увеличиваем счетчик"""
-#         is_new = self.pk is None
-#         super().save(*args, **kwargs)
-#         if is_new:
-#             self.vacancy.increment_applications()
+
+class Application(models.Model):
+    """Модель отклика на вакансию"""
+    vacancy = models.ForeignKey(
+        Vacancy,
+        on_delete=models.CASCADE,
+        related_name='applications',
+        verbose_name="Вакансия"
+    )
+
+    # Используйте AUTH_USER_MODEL
+    applicant = models.ForeignKey(
+        settings.AUTH_USER_MODEL,  # Изменено здесь
+        on_delete=models.CASCADE,
+        related_name='applications',
+        verbose_name="Соискатель"
+    )
+
+    cover_letter = models.TextField(
+        verbose_name="Сопроводительное письмо",
+        blank=True
+    )
+    resume_file = models.FileField(
+        upload_to='resumes/%Y/%m/%d/',
+        null=True,
+        blank=True,
+        verbose_name="Файл резюме"
+    )
+
+    # Статус отклика
+    STATUS_CHOICES = [
+        ('new', 'Новый'),
+        ('reviewed', 'Просмотрено'),
+        ('invited', 'Приглашён на собеседование'),
+        ('rejected', 'Отклонено'),
+        ('accepted', 'Принято'),
+    ]
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='new',
+        verbose_name="Статус"
+    )
+
+    # Метаданные
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата отклика")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата обновления")
+
+    class Meta:
+        verbose_name = "Отклик"
+        verbose_name_plural = "Отклики"
+        unique_together = ['vacancy', 'applicant']
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.applicant.username} → {self.vacancy.title}"
+
+    def save(self, *args, **kwargs):
+        """При сохранении нового отклика увеличиваем счетчик"""
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        if is_new:
+            self.vacancy.increment_applications()
 
 
 class SavedVacancy(models.Model):

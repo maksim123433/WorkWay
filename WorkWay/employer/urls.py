@@ -1,10 +1,11 @@
-from django.contrib import admin
-from django.urls import path, include
-
-from employer.views import EmployerView
+# В urls.py добавьте:
+from django.urls import path
+from . import views
 
 urlpatterns = [
-    path("employer/", EmployerView.as_view(), name="employer"),
-
-
+    path('employer/', views.employer_dashboard, name='employer_pro'),
+    path('employer/vacancy/<int:pk>/details/', views.get_vacancy_details, name='vacancy_details'),
+    path('employer/vacancy/<int:pk>/toggle/', views.toggle_vacancy_status, name='vacancy_toggle'),
+    path('employer/vacancy/<int:pk>/delete/', views.delete_vacancy, name='vacancy_delete'),
+    path('employer/vacancy/<int:pk>/edit/', views.edit_vacancy, name='vacancy_edit'),
 ]

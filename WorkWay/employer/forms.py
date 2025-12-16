@@ -71,10 +71,10 @@ class VacancyForm(forms.ModelForm):
             'education': forms.Select(attrs={'class': 'form-select'}),
         }
         labels = {
-            'title': 'Название должности *',
-            'category': 'Категория *',
-            'location': 'Местоположение *',
-            'employment_type': 'Тип занятости *',
+            'title': 'Название должности',
+            'category': 'Категория',
+            'location': 'Местоположение',
+            'employment_type': 'Тип занятости',
             'salary_min': 'Зарплата (от)',
             'salary_max': 'Зарплата (до)',
             'description': 'Описание вакансии *',
@@ -127,7 +127,7 @@ class VacancyForm(forms.ModelForm):
 
 
 class VacancySearchForm(forms.Form):
-    """Форма поиска вакансий для работодателя"""
+    """Форма поиска вакансий для работодателя (без сортировки)"""
 
     search = forms.CharField(
         required=False,
@@ -143,17 +143,6 @@ class VacancySearchForm(forms.Form):
             ('', 'Все статусы'),
             ('active', 'Активные'),
             ('inactive', 'Неактивные'),
-        ],
-        widget=forms.Select(attrs={'class': 'form-select'})
-    )
-
-    sort_by = forms.ChoiceField(
-        required=False,
-        choices=[
-            ('-created_at', 'Сначала новые'),
-            ('created_at', 'Сначала старые'),
-            ('views_count', 'По просмотрам'),
-            ('applications_count', 'По откликам'),
         ],
         widget=forms.Select(attrs={'class': 'form-select'})
     )

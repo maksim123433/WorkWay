@@ -33,6 +33,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "crispy_forms",
+    "crispy_bootstrap5",
     "profileUser",
     "employer",
     "job_seeker",
@@ -136,3 +138,5 @@ STATICFILES_DIRS = [
 
 AUTH_USER_MODEL = 'profileUser.Profile'
 
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
