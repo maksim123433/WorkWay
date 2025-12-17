@@ -38,7 +38,7 @@
                     <i class="fas fa-home"></i>
                     <span>На главную</span>
                 </a>
-                <a href="" class="btn-secondary logout-btn">
+                <a href="{% url 'logout' %}" class="btn-secondary logout-btn">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>Выйти</span>
                 </a>
@@ -519,11 +519,11 @@
                                     <span>Мои отклики</span>
                                 </a>
                             {% else %}
-                                <a href="{% url 'create_vacancy' %}" class="quick-action-btn">
+                                <a href="" class="quick-action-btn">
                                     <i class="fas fa-plus"></i>
                                     <span>Создать вакансию</span>
                                 </a>
-                                <a href="{% url 'candidate_search' %}" class="quick-action-btn">
+                                <a href="" class="quick-action-btn">
                                     <i class="fas fa-search"></i>
                                     <span>Найти кандидатов</span>
                                 </a>

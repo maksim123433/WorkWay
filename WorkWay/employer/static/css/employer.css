@@ -1322,7 +1322,23 @@ body {
     animation: slideUp 0.3s ease;
     overflow: hidden;
     border: 1px solid rgba(255, 255, 255, 0.2);
+    height: 700px;
+
 }
+
+.modal-content {
+    background: white;
+    margin: 40px auto;
+    width: 90%;
+    max-width: 800px;
+    height: 900px !important; /* вот здесь фиксируем */
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
 
 @keyframes slideUp {
     from {
@@ -1365,8 +1381,8 @@ body {
 
 .modal-body {
     padding: 32px;
-    max-height: 70vh;
-    overflow-y: auto;
+    height: 700px !important;
+
 }
 
 .vacancy-details {
@@ -1394,6 +1410,47 @@ body {
     align-items: center;
     gap: 10px;
 }
+
+
+.detail-section {
+    margin-bottom: 25px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+    background-color: red;
+}
+
+.detail-section-benef {
+    overflow-y: auto;
+}
+
+.detail-section .description-content {
+    overflow-y: auto; /* Прокрутка только для контента */
+    max-height: 150px;
+    padding-right: 5px; /* Чтобы скроллбар не наезжал на текст */
+}
+
+/* Стилизация скроллбара */
+.detail-section .description-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.detail-section .description-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.detail-section .description-content::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.detail-section .description-content::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+
 
 .detail-section h4 i {
     color: #4a6cf7;
@@ -1967,3 +2024,16 @@ body {
     color: #fff;
     border-radius: 20px;
  }
+.nav-logo-link {
+    text-decoration: none;   /* убирает подчеркивание */
+    color: inherit;          /* наследует цвет текста от родителя */
+}
+
+.nav-logo-link:hover,
+.nav-logo-link:focus,
+.nav-logo-link:active {
+    text-decoration: none;   /* убирает подчеркивание при наведении/фокусе */
+    color: inherit;          /* отключает подсветку (синий/фиолетовый) */
+    outline: none;           /* убирает рамку при фокусе */
+}
+

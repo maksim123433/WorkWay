@@ -211,3 +211,10 @@ class ProfileView(LoginRequiredMixin, DetailView):
         """Проверяет, полностью ли заполнена информация о компании"""
         required_fields = ['company_name', 'industry', 'company_description']
         return all(bool(getattr(profile, field)) for field in required_fields)
+
+from django.shortcuts import redirect
+from django.contrib.auth import logout
+
+def logout_view(request):
+    logout(request)  # удаляет данные пользователя из сессии
+    return redirect('main')  # перенаправление на главную страницу

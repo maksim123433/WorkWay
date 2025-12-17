@@ -1,6 +1,6 @@
 # В urls.py добавьте:
 from django.urls import path
-from . import views
+from employer import views
 
 urlpatterns = [
     path('employer/', views.employer_dashboard, name='employer_pro'),
@@ -8,4 +8,5 @@ urlpatterns = [
     path('employer/vacancy/<int:pk>/toggle/', views.toggle_vacancy_status, name='vacancy_toggle'),
     path('employer/vacancy/<int:pk>/delete/', views.delete_vacancy, name='vacancy_delete'),
     path('employer/vacancy/<int:pk>/edit/', views.edit_vacancy, name='vacancy_edit'),
+    path('api/vacancies/<int:vacancy_id>/details/', views.vacancy_details_api, name='vacancy_details_api'),
 ]

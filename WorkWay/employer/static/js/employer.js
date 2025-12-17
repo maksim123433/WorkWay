@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', function() {
     const createBtn = document.getElementById('createVacancyBtn');
     const createFirstBtn = document.getElementById('createFirstVacancyBtn');
@@ -489,4 +490,442 @@ function showVacancyDetails(vacancyId) {
             </div>
         `;
     });
+}
+function showVacancyDetails(vacancyId) {
+    openVacancyModal(vacancyId);
+}
+
+
+//
+//==========================================================
+//==========================================================
+
+// Глобальные функции (должны быть доступны вне DOMContentLoaded)
+
+
+const checkBtn = document.querySelectorAll('.check__btn');
+
+function openVacancyModal(vacancyId) {
+    // event передается как параметр при вызове из обработчика
+    if (event) event.stopPropagation();
+
+    console.log('Opening vacancy details for ID:', vacancyId);
+
+    // Устанавливаем заголовок сразу
+    document.getElementById('modalTitle').textContent = 'Загрузка...';
+    document.getElementById('modalBody').innerHTML = `
+        <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Загрузка информации о вакансии...</p>
+        </div>
+    `;
+
+    // Показываем модальное окно
+    document.getElementById('vacancyModal').style.display = 'block';
+
+    setTimeout(() => {
+        loadVacancyDetails(vacancyId);
+    }, 500);
+}
+
+function loadVacancyDetails(vacancyId) {
+    try {
+        // Находим карточку вакансии через data-id
+        const vacancyCard = document.querySelector(`.js-vacancy[data-id="${vacancyId}"]`);
+
+        if (!vacancyCard) {
+            throw new Error('Вакансия не найдена');
+        }
+
+        // Получаем данные из data-атрибутов карточки
+        const title = vacancyCard.dataset.title;
+        const company = vacancyCard.dataset.company;
+        const location = vacancyCard.dataset.location;
+        const employment = getEmploymentDisplay(vacancyCard.dataset.employment);
+        const experience = getExperienceDisplay(vacancyCard.dataset.experience);
+        const salaryMin = vacancyCard.dataset.salaryMin;
+        const salaryMax = vacancyCard.dataset.salaryMax;
+        const isUrgent = vacancyCard.dataset.urgent === 'true';
+        const isFeatured = vacancyCard.dataset.featured === 'true';
+        const skills = vacancyCard.dataset.skills.split(',').filter(s => s.trim());
+        const date = new Date(vacancyCard.dataset.date).toLocaleDateString('ru-RU');
+
+        // Форматируем зарплату
+        const salaryDisplay = formatSalary(salaryMin, salaryMax);
+
+        // Обновляем заголовок
+        document.getElementById('modalTitle').textContent = title.charAt(0).toUpperCase() + title.slice(1);
+
+        // Формируем HTML содержимое
+        document.getElementById('modalBody').innerHTML = `
+            <div class="vacancy-details">
+                <!-- Основная информация -->
+                <div class="detail-section">
+                    <h4><i class="fas fa-info-circle"></i> Основная информация</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <strong>Компания:</strong>
+                            <span>${company.charAt(0).toUpperCase() + company.slice(1)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Местоположение:</strong>
+                            <span>${location.charAt(0).toUpperCase() + location.slice(1)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Тип занятости:</strong>
+                            <span>${employment}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Зарплата:</strong>
+                            <span>${salaryDisplay}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Требуемый опыт:</strong>
+                            <span>${experience}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Навыки -->
+                ${skills.length > 0 ? `
+                <div class="detail-section">
+                    <h4><i class="fas fa-tools"></i> Ключевые навыки</h4>
+                    <div class="skills-tags-modal">
+                        ${skills.map(skill => `
+                            <span class="skill-tag">${skill.trim().charAt(0).toUpperCase() + skill.trim().slice(1)}</span>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+
+                <!-- Статистика -->
+                <div class="detail-section">
+                    <h4><i class="fas fa-chart-bar"></i> Информация</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <strong>Дата публикации:</strong>
+                            <span>${date}</span>
+                        </div>
+                        <div class="detail-item">
+                            <strong>Статус:</strong>
+                            <span>Активная</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Статусы -->
+                <div class="detail-section">
+                    <h4><i class="fas fa-tags"></i> Статусы</h4>
+                    <div class="tags-container">
+                        ${isFeatured ?
+                            '<span class="status-tag featured"><i class="fas fa-star"></i> Рекомендуемая</span>' :
+                            ''
+                        }
+                        ${isUrgent ?
+                            '<span class="status-tag urgent"><i class="fas fa-fire"></i> Срочная</span>' :
+                            ''
+                        }
+                    </div>
+                </div>
+
+                <!-- Действия -->
+                <div class="detail-section">
+                    <h4><i class="fas fa-bolt"></i> Действия</h4>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" style="width: 100%;" onclick="applyToVacancy(${vacancyId})">
+                            <i class="fas fa-paper-plane"></i> Откликнуться на вакансию
+                        </button>
+                        <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;" onclick="saveVacancy(${vacancyId})">
+                            <i class="far fa-bookmark"></i> Сохранить вакансию
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    } catch (error) {
+        console.error('Error loading vacancy details:', error);
+        document.getElementById('modalTitle').textContent = 'Ошибка';
+        document.getElementById('modalBody').innerHTML = `
+            <div class="error-state">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h5>Не удалось загрузить данные</h5>
+                <p>${error.message}</p>
+                <button onclick="loadVacancyDetails(${vacancyId})" class="btn-retry">
+                    <i class="fas fa-redo"></i> Попробовать снова
+                </button>
+            </div>
+        `;
+    }
+}
+
+
+
+function getEmploymentDisplay(type) {
+    const employmentMap = {
+        'full_time': 'Полная занятость',
+        'part_time': 'Частичная занятость',
+        'project': 'Проектная работа',
+        'internship': 'Стажировка',
+        'remote': 'Удалённая работа',
+        'freelance': 'Фриланс'
+    };
+    return employmentMap[type] || 'Не указано';
+}
+
+function getExperienceDisplay(type) {
+    const experienceMap = {
+        'no_experience': 'Без опыта',
+        '1-3': '1-3 года',
+        '3-5': '3-5 лет',
+        '5+': 'Более 5 лет'
+    };
+    return experienceMap[type] || 'Не указано';
+}
+
+function formatSalary(min, max) {
+    const minNum = parseInt(min);
+    const maxNum = parseInt(max);
+
+    if (minNum && maxNum) {
+        return `${minNum.toLocaleString()} - ${maxNum.toLocaleString()} ₽`;
+    } else if (minNum) {
+        return `от ${minNum.toLocaleString()} ₽`;
+    } else if (maxNum) {
+        return `до ${maxNum.toLocaleString()} ₽`;
+    }
+    return 'По договорённости';
+}
+
+function applyToVacancy(vacancyId) {
+    if (event) event.stopPropagation();
+    alert(`Вы откликнулись на вакансию ${vacancyId}`);
+    closeVacancyModal();
+}
+
+function saveVacancy(vacancyId) {
+    if (event) event.stopPropagation();
+    alert(`Вакансия ${vacancyId} сохранена`);
+    closeVacancyModal();
+}
+
+// Основной обработчик DOMContentLoaded (ОДИН!)
+document.addEventListener('DOMContentLoaded', function() {
+
+    // 1. Делегирование событий для карточек вакансий
+    document.addEventListener('click', function(e) {
+        // Клик по карточке вакансии (но не по кнопкам внутри)
+        const vacancyCard = e.target.closest('.js-vacancy');
+        if (vacancyCard && !e.target.closest('.save-btn') && !e.target.closest('.apply-btn')) {
+            e.preventDefault();
+            const vacancyId = vacancyCard.dataset.id;
+            if (vacancyId) {
+                openVacancyModal(vacancyId);
+            }
+        }
+
+        // Клик по кнопке "Откликнуться"
+        const applyBtn = e.target.closest('.apply-btn');
+        if (applyBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const vacancyCard = applyBtn.closest('.js-vacancy');
+            const vacancyId = vacancyCard ? vacancyCard.dataset.id : null;
+            if (vacancyId) {
+                openVacancyModal(vacancyId);
+            }
+        }
+
+        // Клик по кнопке "Сохранить"
+        const saveBtn = e.target.closest('.save-btn');
+        if (saveBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const icon = saveBtn.querySelector('i');
+            if (icon.classList.contains('far')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                icon.style.color = '#3b82f6';
+                showNotification('Вакансия добавлена в избранное');
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                icon.style.color = '';
+                showNotification('Вакансия удалена из избранного');
+            }
+        }
+    });
+
+    // 2. Обработчики для фильтров и поиска
+    // Переключение быстрых фильтров
+    const filterTags = document.querySelectorAll('.filter-tags .tag');
+    filterTags.forEach(tag => {
+        tag.addEventListener('click', function() {
+            filterTags.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    // Переключение популярных городов
+    const cityTags = document.querySelectorAll('.city-tag');
+    cityTags.forEach(tag => {
+        tag.addEventListener('click', function() {
+            cityTags.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    // 3. Остальные обработчики (поиск, сортировка и т.д.)
+    // Поиск вакансий
+    const searchInput = document.getElementById('jobSearch');
+    const searchButton = document.querySelector('.search-btn');
+
+    function performSearch() {
+        const query = searchInput.value.trim();
+        if (query) {
+            showNotification(`Ищем вакансии по запросу: "${query}"`);
+            searchButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Поиск...';
+            searchButton.disabled = true;
+
+            setTimeout(() => {
+                searchButton.innerHTML = '<i class="fas fa-search"></i> Найти';
+                searchButton.disabled = false;
+                showNotification(`Найдено 12 вакансий по запросу: "${query}"`);
+            }, 1500);
+        }
+    }
+
+    searchButton.addEventListener('click', performSearch);
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
+    });
+
+    // Применение фильтров
+    const applyFiltersBtn = document.querySelector('.apply-filters');
+    const resetFiltersBtn = document.querySelector('.reset-filters');
+
+    applyFiltersBtn.addEventListener('click', function() {
+        this.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            this.style.transform = 'scale(1)';
+        }, 200);
+        showNotification('Фильтры применены');
+    });
+
+    resetFiltersBtn.addEventListener('click', function() {
+        showNotification('Фильтры сброшены');
+    });
+
+    // Сортировка
+    const sortSelect = document.querySelector('.sort-select');
+    sortSelect.addEventListener('change', function() {
+        showNotification(`Сортировка: ${this.options[this.selectedIndex].text}`);
+    });
+
+    // 4. Глобальные обработчики для модального окна
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('vacancyModal');
+        if (event.target === modal) {
+            closeVacancyModal();
+        }
+    });
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeVacancyModal();
+        }
+    });
+
+    // 5. Уведомления
+    function showNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        notification.innerHTML = `
+            <i class="fas fa-check-circle"></i>
+            <span>${message}</span>
+        `;
+
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s ease;
+        `;
+
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    document.body.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    // Добавляем стили для анимаций уведомлений
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+
+    // 6. Анимация при загрузке страницы
+    setTimeout(() => {
+        const searchContainer = document.querySelector('.search-container');
+        if (searchContainer) {
+            searchContainer.style.opacity = '1';
+            searchContainer.style.transform = 'translateY(0)';
+        }
+
+        const vacancyCards = document.querySelectorAll('.vacancy-card');
+        vacancyCards.forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    }, 300);
+});
+
+
+checkBtn.forEach(el => {
+    el.addEventListener('click', showVacancyDetails);
+
+})
+
+function closeVacancyModal() {
+    document.getElementById('vacancyModal').style.display = 'none';
 }

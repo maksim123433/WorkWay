@@ -210,6 +210,82 @@ class Vacancy(models.Model):
         User = get_user_model()  # Получаем модель пользователя
         return f"{self.title} - {self.employer.username}"
 
+    def get_display_name(self):
+        """Получить отображаемое имя для модели"""
+        return self.title
+
+    def get_employment_type_display(self):
+        """Получить отображаемое значение типа занятости"""
+        return dict(EmploymentType.choices).get(self.employment_type, '')
+
+    def get_experience_display(self):
+        """Получить отображаемое значение опыта"""
+        return dict(ExperienceLevel.choices).get(self.experience, '')
+
+    def get_currency_display(self):
+        """Получить отображаемое значение валюты"""
+        return dict(Currency.choices).get(self.currency, '')
+
+    def get_education_display(self):
+        """Получить отображаемое значение образования"""
+        if self.education:
+            return dict(EducationLevel.choices).get(self.education, '')
+        return ''
+
+    def get_category_display(self):
+        """Получить отображаемое название категории"""
+        return self.category.name if self.category else 'IT'
+
+    def get_company_display(self):
+        """Получить отображаемое название компании"""
+        # Проверяем, есть ли у пользователя Profile с полем company_name
+        try:
+            if hasattr(self.employer, 'company_name') and self.employer.company_name:
+                return self.employer.company_name
+        except AttributeError:
+            pass
+        return self.employer.username
+
+    def get_skills_display(self):
+        """Получить отображаемые навыки"""
+        return ', '.join(self.get_skills_list())
+
+    def get_short_description(self):
+        """Короткое описание вакансии"""
+        return self.description[:200] + '...' if len(self.description) > 200 else self.description
+
+    def get_short_requirements(self):
+        """Короткие требования"""
+        return self.requirements[:200] + '...' if len(self.requirements) > 200 else self.requirements
+
+    def get_short_benefits(self):
+        """Короткие преимущества"""
+        return self.benefits[:200] + '...' if len(self.benefits) > 200 else self.benefits
+
+    @property
+    def has_salary(self):
+        """Есть ли указана зарплата"""
+        return bool(self.salary_min or self.salary_max)
+
+    @property
+    def salary_range(self):
+        """Диапазон зарплаты"""
+        return {
+            'min': self.salary_min or 0,
+            'max': self.salary_max or 0
+        }
+
+    @property
+    def days_since_created(self):
+        """Количество дней с момента создания"""
+        from django.utils import timezone
+        return (timezone.now() - self.created_at).days
+
+    @property
+    def is_new(self):
+        """Вакансия новая (менее 3 дней)"""
+        return self.days_since_created < 3
+
     def get_salary_display(self):
         """Отображение зарплаты в удобном формате"""
         if self.salary_min and self.salary_max:

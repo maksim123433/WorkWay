@@ -224,3 +224,54 @@ def duplicate_vacancy(request, pk):
         })
 
     return JsonResponse({'success': False}, status=400)
+
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from .models import Vacancy
+import json
+
+
+def vacancy_details_api(request, vacancy_id):
+    """API endpoint для получения деталей вакансии"""
+    try:
+        vacancy = get_object_or_404(Vacancy, id=vacancy_id)
+
+        # Увеличиваем счетчик просмотров
+        vacancy.increment_views()
+
+        # Подготавливаем данные для JSON
+        data = {
+            'id': vacancy.id,
+            'title': vacancy.title,
+            'employer_name': vacancy.employer.username if vacancy.employer else 'Не указано',
+            'location': vacancy.location,
+            'employment_type': vacancy.employment_type,
+            'employment_type_display': vacancy.get_employment_type_display(),
+            'salary_min': vacancy.salary_min,
+            'salary_max': vacancy.salary_max,
+            'currency': vacancy.currency,
+            'description': vacancy.description,
+            'requirements': vacancy.requirements,
+            'benefits': vacancy.benefits,
+            'experience': vacancy.experience,
+            'experience_display': vacancy.get_experience_display(),
+            'education': vacancy.education,
+            'education_display': vacancy.get_education_display() if vacancy.education else 'Не указано',
+            'skills': vacancy.skills,
+            'contact_person': vacancy.contact_person,
+            'contact_email': vacancy.contact_email,
+            'contact_phone': vacancy.contact_phone,
+            'is_active': vacancy.is_active,
+            'is_featured': vacancy.is_featured,
+            'is_urgent': vacancy.is_urgent,
+            'views_count': vacancy.views_count,
+            'applications_count': vacancy.applications_count,
+            'created_at': vacancy.created_at.isoformat(),
+            'updated_at': vacancy.updated_at.isoformat(),
+        }
+
+        return JsonResponse(data)
+
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

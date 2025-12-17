@@ -28,12 +28,21 @@
                     </div>
                 </div>
             </div>
-            <div class="profile-section">
-                <a href="{% url 'login'%}" class="profile-btn">
+          <div class="profile-section">
+            {% if user.is_authenticated %}
+                <!-- Если пользователь авторизован - показываем имя и ссылку на профиль -->
+                <a href="{% url 'profile' %}" class="profile-btn">
                     <i class="fas fa-user-circle"></i>
-                    <span>Профиль</span>
+                    <span>Профиль | {{ user.first_name|truncatechars:15 }}</span>
                 </a>
-            </div>
+            {% else %}
+                <!-- Если не авторизован - показываем ссылку на вход -->
+                <a href="{% url 'login' %}" class="profile-btn">
+                    <i class="fas fa-user-circle"></i>
+                    <span>Войти</span>
+                </a>
+            {% endif %}
+        </div>
         </header>
 
         <!-- Основной контент -->
@@ -66,37 +75,104 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="action-buttons">
-                    <a href="{% url 'employer_pro' %}" class="action-btn employer-btn">
-                        <div class="btn-icon">
-                            <i class="fas fa-briefcase"></i>
-                            <div class="icon-glow"></div>
-                        </div>
-                        <div class="btn-text">
-                            <h3>Работодателям</h3>
-                            <p>Найдите идеального сотрудника для вашей компании</p>
-                        </div>
-                        <div class="btn-arrow">
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
-                    </a>
+                    {% if user.is_authenticated %}
+                        <!-- Работодатель или суперпользователь: только кнопка работодателя активна -->
+                        {% if user.account_type == 'employer' %}
+                            <!-- Активная кнопка работодателя -->
+                            <a href="{% url 'employer_pro' %}" class="action-btn employer-btn">
+                                <div class="btn-icon">
+                                    <i class="fas fa-briefcase"></i>
+                                    <div class="icon-glow"></div>
+                                </div>
+                                <div class="btn-text">
+                                    <h3>Работодателям</h3>
+                                    <p>Найдите идеального сотрудника для вашей компании</p>
+                                </div>
+                                <div class="btn-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </a>
 
-                    <a href="{% url 'job_seeker' %}" class="action-btn employee-btn">
-                        <div class="btn-icon">
-                            <i class="fas fa-users"></i>
-                            <div class="icon-glow"></div>
-                        </div>
-                        <div class="btn-text">
-                            <h3>Соискателям</h3>
-                            <p>Найдите работу, которая соответствует вашим навыкам</p>
-                        </div>
-                        <div class="btn-arrow">
-                            <i class="fas fa-arrow-right"></i>
-                        </div>
-                    </a>
+                            <!-- Неактивная кнопка соискателя -->
+                             <a href="{% url 'job_seeker' %}" class="action-btn employee-btn">
+                                <div class="btn-icon">
+                                    <i class="fas fa-users"></i>
+                                    <div class="icon-glow"></div>
+                                </div>
+                                <div class="btn-text">
+                                    <h3>Соискателям</h3>
+                                    <p>Найдите работу, которая соответствует вашим навыкам</p>
+                                </div>
+                                <div class="btn-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </a>
+
+                        <!-- Соискатель: только кнопка соискателя активна -->
+                        {% elif user.account_type == 'job_seeker' %}
+                            <!-- Неактивная кнопка работодателя -->
+                            <div class="action-btn employer-btn disabled">
+                                <div class="btn-icon">
+                                    <i class="fas fa-briefcase"></i>
+                                    <div class="icon-glow"></div>
+                                </div>
+                                <div class="btn-text">
+                                    <h3>Работодателям</h3>
+                                    <p>Найдите идеального сотрудника для вашей компании</p>
+                                </div>
+                                <div class="btn-arrow">
+                                    <i class="fas fa-lock"></i>
+                                </div>
+                            </div>
+
+                            <!-- Активная кнопка соискателя -->
+                            <a href="{% url 'job_seeker' %}" class="action-btn employee-btn">
+                                <div class="btn-icon">
+                                    <i class="fas fa-users"></i>
+                                    <div class="icon-glow"></div>
+                                </div>
+                                <div class="btn-text">
+                                    <h3>Соискателям</h3>
+                                    <p>Найдите работу, которая соответствует вашим навыкам</p>
+                                </div>
+                                <div class="btn-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </div>
+                            </a>
+                        {% endif %}
+
+                    {% else %}
+                        <!-- Неавторизованный пользователь: обе кнопки ведут на вход -->
+                        <a href="{% url 'login' %}" class="action-btn employer-btn">
+                            <div class="btn-icon">
+                                <i class="fas fa-briefcase"></i>
+                                <div class="icon-glow"></div>
+                            </div>
+                            <div class="btn-text">
+                                <h3>Работодателям</h3>
+                                <p>Найдите идеального сотрудника для вашей компании</p>
+                            </div>
+                            <div class="btn-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </a>
+
+                        <a href="{% url 'login' %}" class="action-btn employee-btn">
+                            <div class="btn-icon">
+                                <i class="fas fa-users"></i>
+                                <div class="icon-glow"></div>
+                            </div>
+                            <div class="btn-text">
+                                <h3>Соискателям</h3>
+                                <p>Найдите работу, которая соответствует вашим навыкам</p>
+                            </div>
+                            <div class="btn-arrow">
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </a>
+                    {% endif %}
                 </div>
-            </div>
 
             <div class="features">
                 <div class="section-header">
