@@ -298,6 +298,7 @@
                         <p class="section-subtitle">Всего: {{ vacancies_count }} вакансий</p>
                     </div>
 
+
                     {% if vacancies %}
                     <div class="vacancies-list">
                         {% for vacancy in vacancies %}
@@ -476,6 +477,16 @@
                 <div class="modal-body" id="modalBody">
                     <!-- Контент будет загружаться динамически -->
                 </div>
+            </div>
+        </div>
+
+        <div class="modal-otklick" style="display: none;">
+            <div class="modal-otklick-content">
+                <h2>Отклики на вакансию</h2>
+                <div class="modal-otklick-body">
+                    Здесь будут отклики
+                </div>
+                <button class="modal-otklick-close">Закрыть</button>
             </div>
         </div>
 
@@ -931,21 +942,5 @@
                 }, 5000);
             });
         </script>
-        <div id="applicationsModal" class="applications-modal">
-        <div class="applications-modal-content">
-            <div class="applications-modal-header">
-                <h2>Список откликов</h2>
-                <span class="applications-modal-close">&times;</span>
-            </div>
-            <div class="applications-modal-body">
-                <div class="applications-list">
-                    <!-- Список будет заполняться динамически -->
-                </div>
-                <div class="no-applications" style="display: none;">
-                    <p>На эту вакансию пока нет откликов</p>
-                </div>
-            </div>
-        </div>
-    </div>
     </body>
     </html>

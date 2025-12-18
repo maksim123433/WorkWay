@@ -2040,22 +2040,687 @@ body {
     outline: none;           /* убирает рамку при фокусе */
 }
 
+/* ========== МОДАЛЬНОЕ ОКНО ОТКЛИКОВ ========== */
+.modal-applications {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99999;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.modal-applications__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    animation: applicationsFadeIn 0.3s ease;
+}
+
+@keyframes applicationsFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-applications__container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 900px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-applications__content {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    animation: applicationsSlideUp 0.4s ease;
+    overflow: hidden;
+}
+
+@keyframes applicationsSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-applications__header {
+    padding: 24px 32px;
+    border-bottom: 1px solid #eaeaea;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.modal-applications__title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.modal-applications__title i {
+    color: #3498db;
+    font-size: 24px;
+}
+
+.modal-applications__close {
+    background: none;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #7f8c8d;
+    font-size: 20px;
+    transition: all 0.2s;
+}
+
+.modal-applications__close:hover {
+    background: #e74c3c;
+    color: white;
+    transform: rotate(90deg);
+}
+
+.modal-applications__body {
+    padding: 32px;
+    overflow-y: auto;
+    flex-grow: 1;
+    background: #f8f9fa;
+}
+
+.modal-applications__footer {
+    padding: 20px 32px;
+    border-top: 1px solid #eaeaea;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+}
+
+.applications-summary {
+    font-size: 15px;
+    color: #7f8c8d;
+    font-weight: 500;
+}
+
+.modal-applications__close-btn {
+    padding: 10px 24px;
+    background: #95a5a6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.modal-applications__close-btn:hover {
+    background: #7f8c8d;
+    transform: translateY(-1px);
+}
+
+/* Состояния */
+.modal-applications__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.modal-applications__spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(52, 152, 219, 0.2);
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    animation: applicationsSpin 1s linear infinite;
+    margin-bottom: 24px;
+}
+
+@keyframes applicationsSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.modal-applications__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+    color: #7f8c8d;
+}
+
+.modal-applications__empty i {
+    font-size: 64px;
+    color: #bdc3c7;
+    margin-bottom: 24px;
+    opacity: 0.7;
+}
+
+/* Список откликов */
+.applications-list {
+    display: grid;
+    gap: 20px;
+}
+
+.application-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.application-card:hover {
+    border-color: #3498db;
+    box-shadow: 0 8px 25px rgba(52, 152, 219, 0.15);
+    transform: translateY(-2px);
+}
+
+.application-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.application-card__info {
+    flex-grow: 1;
+}
+
+.application-card__name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.application-card__name i {
+    color: #3498db;
+    font-size: 16px;
+}
+
+.application-card__email {
+    font-size: 15px;
+    color: #3498db;
+    margin-bottom: 4px;
+}
+
+.application-card__email a {
+    color: inherit;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.application-card__email a:hover {
+    text-decoration: underline;
+}
+
+.application-card__date {
+    font-size: 13px;
+    color: #7f8c8d;
+    background: #f8f9fa;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid #eaeaea;
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+.application-card__date i {
+    margin-right: 6px;
+    color: #95a5a6;
+}
+
+.application-card__actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.btn-app-action {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn-app-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-profile {
+    background: #3498db;
+    color: white;
+}
+
+.btn-profile:hover {
+    background: #2980b9;
+}
+
+.btn-contact {
+    background: #2ecc71;
+    color: white;
+}
+
+.btn-contact:hover {
+    background: #27ae60;
+}
+
+.btn-resume {
+    background: #9b59b6;
+    color: white;
+}
+
+.btn-resume:hover {
+    background: #8e44ad;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .modal-applications__container {
+        width: 95%;
+        height: 95vh;
+    }
+
+    .modal-applications__content {
+        height: 100%;
+    }
+
+    .modal-applications__header {
+        padding: 20px;
+    }
+
+    .modal-applications__body {
+        padding: 20px;
+    }
+
+    .modal-applications__footer {
+        padding: 16px 20px;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .modal-applications__close-btn {
+        width: 100%;
+    }
+
+    .application-card__header {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .application-card__date {
+        align-self: flex-start;
+    }
+
+    .application-card__actions {
+        justify-content: center;
+    }
+
+    .btn-app-action {
+        flex: 1;
+        min-width: 140px;
+        justify-content: center;
+    }
+}
+
+/* Прокрутка */
+.modal-applications__body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-applications__body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.modal-applications__body::-webkit-scrollbar-thumb {
+    background: #bdc3c7;
+    border-radius: 4px;
+}
+
+.modal-applications__body::-webkit-scrollbar-thumb:hover {
+    background: #95a5a6;
+}
 
 
-<div id="applicationsModal" class="applications-modal">
-    <div class="applications-modal-content">
-        <div class="applications-modal-header">
-            <h2>Список откликов</h2>
-            <span class="applications-modal-close">&times;</span>
-        </div>
-        <div class="applications-modal-body">
-            <div class="applications-list">
-                <!-- Список будет заполняться динамически -->
-            </div>
-            <div class="no-applications" style="display: none;">
-                <p>На эту вакансию пока нет откликов</p>
-            </div>
-        </div>
-    </div>
-</div>
+/* Модальное окно откликов */
+.modal-otklick {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    animation: modal-fade-in 0.3s ease;
+}
 
+@keyframes modal-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-otklick-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 800px;
+    max-height: 85vh;
+    background: white;
+    padding: 0;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    animation: modal-slide-up 0.4s ease;
+}
+
+@keyframes modal-slide-up {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.modal-otklick-header {
+    padding: 24px 32px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-otklick-header h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.modal-otklick-count {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-left: auto;
+}
+
+.modal-otklick-body {
+    padding: 32px;
+    max-height: 60vh;
+    overflow-y: auto;
+    background: #f8fafc;
+}
+
+.modal-otklick-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    font-size: 20px;
+    border: none;
+    transition: all 0.3s;
+    z-index: 10;
+}
+
+.modal-otklick-close:hover {
+    background: rgba(0, 0, 0, 0.5);
+    transform: rotate(90deg);
+}
+
+/* Список откликов */
+.otklick-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.otklick-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.otklick-card:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+    transform: translateY(-2px);
+}
+
+.otklick-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.otklick-card-info {
+    flex: 1;
+}
+
+.otklick-card-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 8px;
+}
+
+.otklick-card-email {
+    font-size: 15px;
+    color: #3b82f6;
+    font-weight: 500;
+}
+
+.otklick-card-email a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.otklick-card-email a:hover {
+    text-decoration: underline;
+}
+
+.otklick-card-date {
+    font-size: 13px;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 6px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.otklick-card-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.otklick-btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.otklick-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.otklick-btn-profile {
+    background: #3b82f6;
+    color: white;
+}
+
+.otklick-btn-profile:hover {
+    background: #2563eb;
+}
+
+.otklick-btn-contact {
+    background: #10b981;
+    color: white;
+}
+
+.otklick-btn-contact:hover {
+    background: #059669;
+}
+
+.otklick-btn-close {
+    background: #64748b;
+    color: white;
+    padding: 10px 24px;
+    border-radius: 8px;
+    border: none;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 24px;
+    width: 100%;
+}
+
+.otklick-btn-close:hover {
+    background: #475569;
+}
+
+/* Состояние "нет откликов" */
+.otklick-empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: #64748b;
+}
+
+.otklick-empty-icon {
+    font-size: 64px;
+    color: #cbd5e1;
+    margin-bottom: 20px;
+}
+
+/* Прокрутка */
+.modal-otklick-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-otklick-body::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.modal-otklick-body::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.modal-otklick-body::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .modal-otklick-content {
+        width: 95%;
+        max-height: 90vh;
+    }
+
+    .modal-otklick-header {
+        padding: 20px;
+    }
+
+    .modal-otklick-body {
+        padding: 20px;
+    }
+
+    .otklick-card {
+        padding: 20px;
+    }
+
+    .otklick-card-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .otklick-card-date {
+        align-self: flex-start;
+    }
+
+    .otklick-card-actions {
+        flex-direction: column;
+    }
+
+    .otklick-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

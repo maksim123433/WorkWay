@@ -113,6 +113,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Просмотр вакансии:', vacancyId);
                 // В реальном приложении переход на страницу вакансии
             }
+
+//            if (e.target.closest('.btn-applications')) {
+//                console.log(e.target);
+//                console.log(vacancyId)
+//            }
         });
     });
 
@@ -146,32 +151,35 @@ document.addEventListener('DOMContentLoaded', function() {
                     break;
 
                 case 'applications':
-                    console.log('xyi11111111111ы');
+                    console.log('Открываем отклики');
 
-                    const applicationsVacancyId = e.currentTarget.dataset.vacancyId; // изменили имя переменной
+                    const applicationsVacancyId = e.currentTarget.dataset.vacancyId;
+                    console.log('Vacancy ID:', applicationsVacancyId);
 
-                    console.log(applicationsVacancyId)
                     if (applicationsVacancyId) {
+                        // Делаем запрос к серверу
                         fetch(`/otkliki/${applicationsVacancyId}/`, {
                             method: 'GET',
                             headers: {
                                 'Content-Type': 'application/json',
-
                             }
                         })
                         .then(response => {
                             if (response.ok) {
-                                console.log('ok')
+                                console.log('Данные получены успешно')
                                 return response.json();
                             }
-                            throw new Error('Network response was not ok');
+                            throw new Error('Ошибка сети: ' + response.status);
                         })
                         .then(data => {
                             console.log('Ответ от сервера:', data);
-                            // Обрабатываем ответ (например, показываем модалку с откликами)
+
+                            // ОДНА ФУНКЦИЯ, которая всё делает
+                            showApplicationsModalSimple(applicationsVacancyId, data);
                         })
                         .catch(error => {
                             console.error('Ошибка при запросе:', error);
+                            alert('Не удалось загрузить отклики: ' + error.message);
                         });
                     }
                     break;
@@ -949,4 +957,186 @@ checkBtn.forEach(el => {
 
 function closeVacancyModal() {
     document.getElementById('vacancyModal').style.display = 'none';
+}
+
+
+// ========== МОДАЛЬНОЕ ОКНО ОТКЛИКОВ ==========
+
+// ========== ПРОСТОЕ МОДАЛЬНОЕ ОКНО ОТКЛИКОВ ==========
+
+function showApplicationsModalSimple(vacancyId, data) {
+    console.log('Создаем модальное окно для откликов вакансии:', vacancyId);
+    console.log(data, 'data------------------>');
+
+    const modalOtklick = document.querySelector('.modal-otklick');
+
+    // Очищаем и наполняем содержимое
+    modalOtklick.innerHTML = `
+        <div class="modal-otklick-content">
+            <button class="modal-otklick-close">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-otklick-header">
+                <h2>
+                    <i class="fas fa-users"></i>
+                    Отклики на вакансию #${vacancyId}
+                    <span class="modal-otklick-count">${data.count || 0}</span>
+                </h2>
+            </div>
+            <div class="modal-otklick-body">
+                ${getOtklickContent(data)}
+            </div>
+        </div>
+    `;
+
+    // Показываем окно
+    modalOtklick.style.display = 'block';
+
+    // Вешаем обработчики
+    setupOtklickModalEvents();
+}
+
+// Функция для создания контента
+function getOtklickContent(data) {
+    const persons = data.persons || [];
+
+    if (persons.length === 0) {
+        return `
+            <div class="otklick-empty">
+                <div class="otklick-empty-icon">
+                    <i class="fas fa-user-slash"></i>
+                </div>
+                <h3>На эту вакансию пока нет откликов</h3>
+                <p>Здесь будут появляться отклики соискателей</p>
+            </div>
+        `;
+    }
+
+    let html = '<div class="otklick-list">';
+
+    persons.forEach(person => {
+        const date = new Date(person.created_at);
+        const formattedDate = date.toLocaleDateString('ru-RU', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        const relativeTime = getRelativeTime(date);
+        const personName = person.name || 'Анонимный соискатель';
+
+        html += `
+            <div class="otklick-card">
+                <div class="otklick-card-header">
+                    <div class="otklick-card-info">
+                        <div class="otklick-card-name">
+                            <i class="fas fa-user-circle"></i>
+                            ${escapeHtml(personName)}
+                        </div>
+                        <div class="otklick-card-email">
+                            <i class="fas fa-envelope"></i>
+                            ${person.email ?
+                                `<a href="mailto:${escapeHtml(person.email)}">${escapeHtml(person.email)}</a>` :
+                                '<span style="color: #64748b;">Email не указан</span>'
+                            }
+                        </div>
+                    </div>
+                    <div class="otklick-card-date" title="${formattedDate}">
+                        <i class="far fa-clock"></i>
+                        ${relativeTime}
+                    </div>
+                </div>
+                <div class="otklick-card-actions">
+                    ${person.email ? `
+                    <button class="otklick-btn otklick-btn-contact"
+                            onclick="contactApplicant('${escapeHtml(person.email)}')">
+                        <i class="fas fa-comment"></i>
+                        Написать
+                    </button>
+                    ` : `
+                    <button class="otklick-btn otklick-btn-contact" disabled style="opacity: 0.5;">
+                        <i class="fas fa-comment"></i>
+                        Email не указан
+                    </button>
+                    `}
+                </div>
+            </div>
+        `;
+    });
+
+    html += '</div>';
+
+    // Кнопка закрытия
+    html += `<button class="otklick-btn-close">Закрыть</button>`;
+
+    return html;
+}
+
+// Функция для обработчиков событий
+function setupOtklickModalEvents() {
+    const modal = document.querySelector('.modal-otklick');
+    const closeBtn = modal.querySelector('.modal-otklick-close');
+    const closeBottomBtn = modal.querySelector('.otklick-btn-close');
+
+    // Функция закрытия
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+    // Закрытие по крестику
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+
+    // Закрытие по кнопке внизу
+    if (closeBottomBtn) closeBottomBtn.addEventListener('click', closeModal);
+
+    // Закрытие по клику на фон
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Закрытие по ESC
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.style.display === 'block') {
+            closeModal();
+        }
+    });
+}
+
+// Вспомогательные функции
+function getRelativeTime(date) {
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMs / 3600000);
+    const diffDays = Math.floor(diffMs / 86400000);
+
+    if (diffMins < 1) return 'только что';
+    if (diffMins < 60) return `${diffMins} мин. назад`;
+    if (diffHours < 24) return `${diffHours} ч. назад`;
+    if (diffDays === 1) return 'вчера';
+    if (diffDays < 7) return `${diffDays} дн. назад`;
+
+    return date.toLocaleDateString('ru-RU', {
+        day: 'numeric',
+        month: 'short'
+    });
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+function contactApplicant(email) {
+    if (!email || email === 'Email не указан') {
+        alert('У соискателя не указан email');
+        return;
+    }
+    window.location.href = `mailto:${email}?subject=Ваш отклик на вакансию`;
 }
