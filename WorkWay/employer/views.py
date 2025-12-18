@@ -275,3 +275,51 @@ def vacancy_details_api(request, vacancy_id):
 
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+from django.shortcuts import get_object_or_404, render
+from responses.models import Otklik
+from employer.models import Vacancy
+
+from django.shortcuts import get_object_or_404, render
+from employer.models import Vacancy
+from responses.models import  Otklik
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+
+
+def otcliki(request, vacancia_id):
+    print(f'Получен запрос для vacancia_id: {vacancia_id}')
+
+    try:
+        vacancy = get_object_or_404(Vacancy, id=int(vacancia_id))
+
+        persons = Otklik.objects.filter(vacancy=vacancy)
+
+        # Сериализуем данные
+        persons_data = []
+        for person in persons:
+            persons_data.append({
+                'id': person.applicant.id,
+                'name': person.applicant.username,
+                'email': person.applicant.email,
+                'created_at': person.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            })
+
+        print(f'Найдено {len(persons_data)} откликов')
+
+        # ВАЖНО: возвращаем JsonResponse
+        return JsonResponse({
+            'success': True,
+            'vacancy_id': vacancia_id,
+            'count': len(persons_data),
+            'persons': persons_data
+        })
+
+    except Exception as e:
+        print(f'Ошибка в otcliki: {str(e)}')
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+

@@ -1,5 +1,6 @@
 
 document.addEventListener('DOMContentLoaded', function() {
+
     const createBtn = document.getElementById('createVacancyBtn');
     const createFirstBtn = document.getElementById('createFirstVacancyBtn');
     const quickCreateBtn = document.querySelector('#quickCreateVacancy .btn-quick');
@@ -127,18 +128,55 @@ document.addEventListener('DOMContentLoaded', function() {
                           this.classList.contains('btn-pause') ? 'pause' :
                           this.classList.contains('btn-activate') ? 'activate' : '';
 
-            console.log('Действие:', action, 'для вакансии:', vacancyId);
+
 
             // В реальном приложении соответствующие действия
             switch(action) {
                 case 'edit':
-                    alert('Редактирование вакансии ' + vacancyId);
+                    // Редактирование
                     break;
-                case 'view'
+
+                case 'view':
+                    console.log(action);
+                    console.log('xyi11111111111ы');
+                    console.log(e.currentTarget);
+                    console.log(e.currentTarget.dataset.vacancyId);
+                    const vacancyId = e.currentTarget.dataset.vacancyId;
+                    openVacancyModal(vacancyId);
                     break;
+
                 case 'applications':
-                    alert('Просмотр откликов на вакансию ' + vacancyId);
+                    console.log('xyi11111111111ы');
+
+                    const applicationsVacancyId = e.currentTarget.dataset.vacancyId; // изменили имя переменной
+
+                    console.log(applicationsVacancyId)
+                    if (applicationsVacancyId) {
+                        fetch(`/otkliki/${applicationsVacancyId}/`, {
+                            method: 'GET',
+                            headers: {
+                                'Content-Type': 'application/json',
+
+                            }
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                console.log('ok')
+                                return response.json();
+                            }
+                            throw new Error('Network response was not ok');
+                        })
+                        .then(data => {
+                            console.log('Ответ от сервера:', data);
+                            // Обрабатываем ответ (например, показываем модалку с откликами)
+                        })
+                        .catch(error => {
+                            console.error('Ошибка при запросе:', error);
+                        });
+                    }
                     break;
+
+
                 case 'pause':
                     if (confirm('Приостановить вакансию?')) {
                         this.innerHTML = '<i class="fas fa-play"></i><span>Активировать</span>';
@@ -168,6 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
 
     // Инициализация селектов с улучшенным UI
     const selects = document.querySelectorAll('select');
@@ -496,6 +535,8 @@ function showVacancyDetails(vacancyId) {
 }
 
 
+
+
 //
 //==========================================================
 //==========================================================
@@ -503,15 +544,23 @@ function showVacancyDetails(vacancyId) {
 // Глобальные функции (должны быть доступны вне DOMContentLoaded)
 
 
-const checkBtn = document.querySelectorAll('.check__btn');
+const btnView = document.querySelectorAll('.btn-view');
+console.log(btnView)
+console.log('z=z==z=z==z=z=z==z')
 
 function openVacancyModal(vacancyId) {
+
+
+
+
     // event передается как параметр при вызове из обработчика
     if (event) event.stopPropagation();
 
     console.log('Opening vacancy details for ID:', vacancyId);
 
     // Устанавливаем заголовок сразу
+    console.log(document.getElementById('modalTitle'))
+
     document.getElementById('modalTitle').textContent = 'Загрузка...';
     document.getElementById('modalBody').innerHTML = `
         <div class="loading-state">
@@ -529,9 +578,12 @@ function openVacancyModal(vacancyId) {
 }
 
 function loadVacancyDetails(vacancyId) {
+    console.log('zzzzz')
+    const vacID = Number(vacancyId); // число
+
     try {
         // Находим карточку вакансии через data-id
-        const vacancyCard = document.querySelector(`.js-vacancy[data-id="${vacancyId}"]`);
+        const vacancyCard = document.querySelector(`.vacancy-card[data-id="vacancy-${vacID}"]`);
 
         if (!vacancyCard) {
             throw new Error('Вакансия не найдена');
@@ -547,14 +599,20 @@ function loadVacancyDetails(vacancyId) {
         const salaryMax = vacancyCard.dataset.salaryMax;
         const isUrgent = vacancyCard.dataset.urgent === 'true';
         const isFeatured = vacancyCard.dataset.featured === 'true';
-        const skills = vacancyCard.dataset.skills.split(',').filter(s => s.trim());
+        const skills = (vacancyCard.dataset.skills || "")
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean);
         const date = new Date(vacancyCard.dataset.date).toLocaleDateString('ru-RU');
+        const requirements = vacancyCard.dataset.requirements || "";
+        const benefits = vacancyCard.dataset.benefits || "";
 
         // Форматируем зарплату
         const salaryDisplay = formatSalary(salaryMin, salaryMax);
 
         // Обновляем заголовок
-        document.getElementById('modalTitle').textContent = title.charAt(0).toUpperCase() + title.slice(1);
+        document.getElementById('modalTitle').textContent =
+            title.charAt(0).toUpperCase() + title.slice(1);
 
         // Формируем HTML содержимое
         document.getElementById('modalBody').innerHTML = `
@@ -563,26 +621,11 @@ function loadVacancyDetails(vacancyId) {
                 <div class="detail-section">
                     <h4><i class="fas fa-info-circle"></i> Основная информация</h4>
                     <div class="detail-grid">
-                        <div class="detail-item">
-                            <strong>Компания:</strong>
-                            <span>${company.charAt(0).toUpperCase() + company.slice(1)}</span>
-                        </div>
-                        <div class="detail-item">
-                            <strong>Местоположение:</strong>
-                            <span>${location.charAt(0).toUpperCase() + location.slice(1)}</span>
-                        </div>
-                        <div class="detail-item">
-                            <strong>Тип занятости:</strong>
-                            <span>${employment}</span>
-                        </div>
-                        <div class="detail-item">
-                            <strong>Зарплата:</strong>
-                            <span>${salaryDisplay}</span>
-                        </div>
-                        <div class="detail-item">
-                            <strong>Требуемый опыт:</strong>
-                            <span>${experience}</span>
-                        </div>
+                        <div class="detail-item"><strong>Компания:</strong> <span>${company}</span></div>
+                        <div class="detail-item"><strong>Местоположение:</strong> <span>${location}</span></div>
+                        <div class="detail-item"><strong>Тип занятости:</strong> <span>${employment}</span></div>
+                        <div class="detail-item"><strong>Зарплата:</strong> <span>${salaryDisplay}</span></div>
+                        <div class="detail-item"><strong>Требуемый опыт:</strong> <span>${experience}</span></div>
                     </div>
                 </div>
 
@@ -591,53 +634,30 @@ function loadVacancyDetails(vacancyId) {
                 <div class="detail-section">
                     <h4><i class="fas fa-tools"></i> Ключевые навыки</h4>
                     <div class="skills-tags-modal">
-                        ${skills.map(skill => `
-                            <span class="skill-tag">${skill.trim().charAt(0).toUpperCase() + skill.trim().slice(1)}</span>
-                        `).join('')}
+                        ${skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
                     </div>
-                </div>
-                ` : ''}
+                </div>` : ''}
+
+                <!-- Требования -->
+                ${requirements ? `
+                <div class="detail-section">
+                    <h4><i class="fas fa-list"></i> Требования</h4>
+                    <p>${requirements}</p>
+                </div>` : ''}
+
+                <!-- Преимущества -->
+                ${benefits ? `
+                <div class="detail-section">
+                    <h4><i class="fas fa-gift"></i> Преимущества</h4>
+                    <p>${benefits}</p>
+                </div>` : ''}
 
                 <!-- Статистика -->
                 <div class="detail-section">
                     <h4><i class="fas fa-chart-bar"></i> Информация</h4>
                     <div class="detail-grid">
-                        <div class="detail-item">
-                            <strong>Дата публикации:</strong>
-                            <span>${date}</span>
-                        </div>
-                        <div class="detail-item">
-                            <strong>Статус:</strong>
-                            <span>Активная</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Статусы -->
-                <div class="detail-section">
-                    <h4><i class="fas fa-tags"></i> Статусы</h4>
-                    <div class="tags-container">
-                        ${isFeatured ?
-                            '<span class="status-tag featured"><i class="fas fa-star"></i> Рекомендуемая</span>' :
-                            ''
-                        }
-                        ${isUrgent ?
-                            '<span class="status-tag urgent"><i class="fas fa-fire"></i> Срочная</span>' :
-                            ''
-                        }
-                    </div>
-                </div>
-
-                <!-- Действия -->
-                <div class="detail-section">
-                    <h4><i class="fas fa-bolt"></i> Действия</h4>
-                    <div class="action-buttons">
-                        <button class="btn btn-primary" style="width: 100%;" onclick="applyToVacancy(${vacancyId})">
-                            <i class="fas fa-paper-plane"></i> Откликнуться на вакансию
-                        </button>
-                        <button class="btn btn-secondary" style="width: 100%; margin-top: 10px;" onclick="saveVacancy(${vacancyId})">
-                            <i class="far fa-bookmark"></i> Сохранить вакансию
-                        </button>
+                        <div class="detail-item"><strong>Дата публикации:</strong> <span>${date}</span></div>
+                        <div class="detail-item"><strong>Статус:</strong> <span>Активная</span></div>
                     </div>
                 </div>
             </div>
@@ -657,6 +677,7 @@ function loadVacancyDetails(vacancyId) {
         `;
     }
 }
+
 
 
 

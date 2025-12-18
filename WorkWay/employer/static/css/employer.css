@@ -393,9 +393,10 @@ body {
     border-radius: 20px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    overflow: hidden;
+    overflow-y: auto;  /* ← ИЗМЕНЕНО! */
     display: flex;
     flex-direction: column;
+    height: auto;
 }
 
 /* Заголовок контента */
@@ -608,6 +609,7 @@ body {
 .vacancies-section {
     padding: 32px;
     flex: 1;
+
 }
 
 .vacancies-section h2 {
@@ -634,6 +636,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    height: auto;
 }
 
 .vacancy-card {
@@ -1418,7 +1421,7 @@ body {
     background: #f8f9fa;
     border-radius: 8px;
     border-left: 4px solid #667eea;
-    background-color: red;
+
 }
 
 .detail-section-benef {
@@ -2036,4 +2039,23 @@ body {
     color: inherit;          /* отключает подсветку (синий/фиолетовый) */
     outline: none;           /* убирает рамку при фокусе */
 }
+
+
+
+<div id="applicationsModal" class="applications-modal">
+    <div class="applications-modal-content">
+        <div class="applications-modal-header">
+            <h2>Список откликов</h2>
+            <span class="applications-modal-close">&times;</span>
+        </div>
+        <div class="applications-modal-body">
+            <div class="applications-list">
+                <!-- Список будет заполняться динамически -->
+            </div>
+            <div class="no-applications" style="display: none;">
+                <p>На эту вакансию пока нет откликов</p>
+            </div>
+        </div>
+    </div>
+</div>
 

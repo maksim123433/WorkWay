@@ -301,7 +301,48 @@
                     {% if vacancies %}
                     <div class="vacancies-list">
                         {% for vacancy in vacancies %}
-                        <div class="vacancy-card" id="vacancy-{{ vacancy.id }}">
+                        <div class="vacancy-card"
+                             data-id="vacancy-{{ vacancy.id }}"
+                             data-title="{{ vacancy.title|lower }}"
+                             data-company="{{ vacancy.employer.company_name }}"
+                             data-company-name="{{ vacancy.employer.get_display_name|default:vacancy.employer.username|lower }}"
+                             data-location="{{ vacancy.location|lower }}"
+                             data-category="{{ vacancy.category.name|default:'IT'|lower }}"
+                             data-category-id="{{ vacancy.category.id|default:'' }}"
+                             data-employment="{{ vacancy.employment_type }}"
+                             data-employment-display="{{ vacancy.get_employment_type_display }}"
+                             data-experience="{{ vacancy.experience }}"
+                             data-experience-display="{{ vacancy.get_experience_display }}"
+                             data-experience-short="{{ vacancy.get_experience_display_short }}"
+                             data-salary-min="{{ vacancy.salary_min|default:0 }}"
+                             data-salary-max="{{ vacancy.salary_max|default:0 }}"
+                             data-currency="{{ vacancy.currency }}"
+                             data-currency-display="{{ vacancy.get_currency_display }}"
+                             data-salary-display="{{ vacancy.get_salary_display }}"
+                             data-urgent="{{ vacancy.is_urgent|yesno:'true,false' }}"
+                             data-featured="{{ vacancy.is_featured|yesno:'true,false' }}"
+                             data-active="{{ vacancy.is_active|yesno:'true,false' }}"
+                             data-date="{{ vacancy.created_at|date:'Y-m-d' }}"
+                             data-date-display="{{ vacancy.created_at|date:'d.m.Y' }}"
+                             data-updated="{{ vacancy.updated_at|date:'Y-m-d' }}"
+                             data-views="{{ vacancy.views_count }}"
+                             data-applications="{{ vacancy.applications_count }}"
+                             data-skills="{{ vacancy.skills|default:''|lower }}"
+                             data-skills-list="{{ vacancy.get_skills_list|join:','|lower }}"
+                             data-description="{{ vacancy.description|striptags|truncatechars:200 }}"
+                             data-requirements="{{ vacancy.requirements}}"
+
+                             data-benefits="{{ vacancy.benefits }}"
+
+                             data-education="{{ vacancy.education|default:'' }}"
+                             data-education-display="{{ vacancy.get_education_display|default:'' }}"
+                             data-contact-person="{{ vacancy.contact_person|default:'' }}"
+                             data-contact-email="{{ vacancy.contact_email|default:'' }}"
+                             data-contact-phone="{{ vacancy.contact_phone|default:'' }}"
+                             data-employer-id="{{ vacancy.employer.id }}"
+                             data-employer-avatar="{{ vacancy.employer.avatar.url|default:'' }}"
+                             data-company-logo="{{ vacancy.employer.company_logo.url|default:'' }}"
+                        >
                             <div class="vacancy-header">
                                 <div class="vacancy-title-row">
                                     <h3>{{ vacancy.title }}</h3>
@@ -372,7 +413,7 @@
 
                             <div class="vacancy-actions">
                                 <!-- Просмотр -->
-                                <button class="btn-action btn-view " onclick="showVacancyDetails({{ vacancy.id }})">
+                                <button class="btn-action btn-view" data-vacancy-id="{{ vacancy.id }}">
                                     <i class="fas fa-eye"></i>
                                     <span>Просмотр</span>
                                 </button>
@@ -384,7 +425,7 @@
                                 </button>
 
                                 <!-- Отклики -->
-                                <button class="btn-action btn-applications">
+                                <button class="btn-action btn-applications" data-vacancy-id="{{ vacancy.id }}">
                                     <i class="fas fa-users"></i>
                                     <span>Отклики ({{ vacancy.applications_count }})</span>
                                 </button>
@@ -421,10 +462,24 @@
             </main>
         </div>
 
-
+        <div id="vacancyModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="modal-title-container">
+                        <h3 id="modalTitle">Вакансия</h3>
+                        <div class="modal-badges" id="modalBadges"></div>
+                    </div>
+    <!--                <button class="close-modal">-->
+    <!--                    <i class="fas fa-times"></i>-->
+    <!--                </button>-->
+                </div>
+                <div class="modal-body" id="modalBody">
+                    <!-- Контент будет загружаться динамически -->
+                </div>
+            </div>
+        </div>
 
         <script src="{% static 'js/employer.js' %}"></script>
-        <script src="{% static 'js/employees.js' %}"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
             // Текущая редактируемая вакансия
@@ -876,5 +931,21 @@
                 }, 5000);
             });
         </script>
+        <div id="applicationsModal" class="applications-modal">
+        <div class="applications-modal-content">
+            <div class="applications-modal-header">
+                <h2>Список откликов</h2>
+                <span class="applications-modal-close">&times;</span>
+            </div>
+            <div class="applications-modal-body">
+                <div class="applications-list">
+                    <!-- Список будет заполняться динамически -->
+                </div>
+                <div class="no-applications" style="display: none;">
+                    <p>На эту вакансию пока нет откликов</p>
+                </div>
+            </div>
+        </div>
+    </div>
     </body>
     </html>

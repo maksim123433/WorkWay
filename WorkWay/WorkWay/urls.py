@@ -28,3 +28,5 @@ urlpatterns = [
     path("",include("responses.urls")),
     path("admin/", admin.site.urls),
 ]
+# email: admin@gmail.com
+# admin123
