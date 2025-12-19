@@ -33,41 +33,13 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('scroll', animateOnScroll);
 
     // Обработчики кнопок
-    const editProfileBtn = document.querySelector('.edit-profile-btn');
-    if (editProfileBtn) {
-        editProfileBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            showNotification('Редактирование профиля', 'Функция редактирования будет доступна в следующем обновлении!');
-        });
-    }
 
-    const addVacancyBtn = document.querySelector('.add-vacancy-btn');
-    if (addVacancyBtn) {
-        addVacancyBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            showNotification('Добавление вакансии', 'Вы сможете добавить новую вакансию в следующем обновлении!');
-        });
-    }
+
 
     // Обработчики быстрых действий
-    const quickActionBtns = document.querySelectorAll('.quick-action-btn');
-    quickActionBtns.forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            const actionText = this.querySelector('span').textContent;
-            showNotification(actionText, 'Функция будет доступна в ближайшее время!');
-        });
-    });
 
-    // Обработчики полезных ссылок
-    const linkItems = document.querySelectorAll('.link-item');
-    linkItems.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const linkText = this.querySelector('span').textContent;
-            showNotification(linkText, 'Страница находится в разработке');
-        });
-    });
+
+
 
     // Функция показа уведомления
     function showNotification(title, message) {
@@ -161,8 +133,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.head.appendChild(style);
         }
 
-        // Добавляем уведомление на страницу
-        document.body.appendChild(notification);
 
         // Добавляем обработчик закрытия
         const closeBtn = notification.querySelector('.close-notification');

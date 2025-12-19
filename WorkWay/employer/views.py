@@ -288,38 +288,58 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 
 
+@login_required
 def otcliki(request, vacancia_id):
-    print(f'Получен запрос для vacancia_id: {vacancia_id}')
+    vacancy = get_object_or_404(Vacancy, id=vacancia_id)
 
-    try:
-        vacancy = get_object_or_404(Vacancy, id=int(vacancia_id))
+    persons = Otklik.objects.filter(vacancy=vacancy)
 
-        persons = Otklik.objects.filter(vacancy=vacancy)
-
-        # Сериализуем данные
-        persons_data = []
-        for person in persons:
-            persons_data.append({
-                'id': person.applicant.id,
-                'name': person.applicant.username,
-                'email': person.applicant.email,
-                'created_at': person.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-            })
-
-        print(f'Найдено {len(persons_data)} откликов')
-
-        # ВАЖНО: возвращаем JsonResponse
-        return JsonResponse({
-            'success': True,
-            'vacancy_id': vacancia_id,
-            'count': len(persons_data),
-            'persons': persons_data
+    persons_data = []
+    for person in persons:
+        applicant = person.applicant
+        persons_data.append({
+            'id': applicant.id,
+            'first_name': applicant.first_name,
+            'last_name': applicant.last_name,
+            'email': applicant.email,
+            'phone': applicant.phone,
+            'city': applicant.city,
+            'country': applicant.country,
+            'citizenship': applicant.citizenship,
+            'account_type': applicant.account_type,
+            'position': applicant.position,
+            'experience': applicant.experience,
+            'skills': applicant.skills,
+            'education': applicant.education,
+            'previous_positions': applicant.get_previous_positions(),
+            'about': applicant.about,
+            'employment_type': applicant.employment_type,
+            'work_schedule': applicant.work_schedule,
+            'relocation_ready': applicant.relocation_ready,
+            'business_trips_ready': applicant.business_trips_ready,
+            'birth_date': applicant.birth_date.strftime('%Y-%m-%d') if applicant.birth_date else None,
+            'gender': applicant.gender,
+            'marital_status': applicant.marital_status,
+            'languages': applicant.languages,
+            'driving_license': applicant.driving_license,
+            'driver_license_category': applicant.driver_license_category,
+            'achievements': applicant.achievements,
+            'portfolio_link': applicant.portfolio_link,
+            'github_url': applicant.github_url,
+            'company_name': applicant.company_name,
+            'industry': applicant.industry,
+            'company_size': applicant.company_size,
+            'company_description': applicant.company_description,
+            'company_website': applicant.company_website,
+            'company_address': applicant.company_address,
+            'terms_accepted': applicant.terms_accepted,
+            'newsletter': applicant.newsletter,
+            'created_at': person.created_at.strftime('%Y-%m-%d %H:%M:%S'),
         })
 
-    except Exception as e:
-        print(f'Ошибка в otcliki: {str(e)}')
-        return JsonResponse({
-            'success': False,
-            'error': str(e)
-        }, status=500)
-
+    return JsonResponse({
+        'success': True,
+        'vacancy_id': vacancia_id,
+        'count': len(persons_data),
+        'persons': persons_data
+    })

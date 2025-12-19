@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поиск кандидатов</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a0ca3;
+            --secondary: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --success: #4cc9f0;
+            --border-radius: 12px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .logo {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Search Section */
+        .search-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 1.2rem;
+            z-index: 2;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 18px 20px 18px 60px;
+            font-size: 16px;
+            border: 2px solid #e1e5eb;
+            border-radius: 50px;
+            outline: none;
+            transition: var(--transition);
+            background: var(--light);
+        }
+
+        #searchInput:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.1);
+            background: white;
+        }
+
+        #searchInput::placeholder {
+            color: #a0aec0;
+        }
+
+        .search-hint {
+            text-align: center;
+            margin-top: 15px;
+            color: var(--gray);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .search-hint i {
+            color: var(--success);
+        }
+
+        /* Results Info */
+        .results-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .results-count {
+            font-size: 1.2rem;
+            color: var(--dark);
+        }
+
+        .results-count span {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.4rem;
+        }
+
+        .clear-btn {
+            background: var(--light);
+            color: var(--gray);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .clear-btn:hover {
+            background: #e9ecef;
+            color: var(--dark);
+        }
+
+        /* Candidates Grid */
+        .candidates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .candidates-grid.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+
+        .candidate-card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: var(--transition);
+            position: relative;
+            border: 1px solid #f1f3f4;
+        }
+
+        .candidate-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 25px;
+            position: relative;
+        }
+
+        .candidate-avatar {
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .candidate-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+
+        .candidate-position {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
+        .card-body {
+            padding: 25px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f3f4;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--light), #e9ecef);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .info-content {
+            flex: 1;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-bottom: 3px;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .card-footer {
+            padding: 20px 25px;
+            background: var(--light);
+            border-top: 1px solid #f1f3f4;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .pdf-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--secondary), #b5179e);
+            color: white;
+            text-decoration: none;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(247, 37, 133, 0.2);
+        }
+
+        .pdf-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(247, 37, 133, 0.3);
+            gap: 15px;
+        }
+
+        .pdf-btn i {
+            transition: transform 0.3s ease;
+        }
+
+        .pdf-btn:hover i {
+            transform: scale(1.2);
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 80px 20px;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+        }
+
+        .no-results-icon {
+            font-size: 5rem;
+            color: #e9ecef;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .no-results h3 {
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .no-results p {
+            color: var(--gray);
+            max-width: 400px;
+            margin: 0 auto 25px;
+        }
+
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .suggestion-tag {
+            background: var(--light);
+            color: var(--gray);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .suggestion-tag:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Loading Animation */
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: var(--gray);
+        }
+
+        .loader {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 3px solid #f1f3f4;
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .candidates-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                padding: 30px 15px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .results-info {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .card-header {
+                padding: 20px;
+            }
+
+            .candidate-name {
+                font-size: 1.4rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                padding: 0;
+            }
+
+            .search-container,
+            .results-info,
+            .candidate-card {
+                border-radius: 0;
+                margin-left: -10px;
+                margin-right: -10px;
+                width: calc(100% + 20px);
+            }
+
+            .pdf-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <i class="fas fa-user-tie"></i>
+            </div>
+            <h1>Поиск кандидатов</h1>
+            <p class="subtitle">Найдите подходящих специалистов по базе резюме и скачайте их профили в PDF формате</p>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Введите название должности, например: 'Python разработчик', 'Менеджер проектов', 'Дизайнер'..."
+                    autocomplete="off"
+                >
+            </div>
+            <div class="search-hint">
+                <i class="fas fa-lightbulb"></i>
+                <span>Попробуйте поиск по ключевым словам: разработчик, менеджер, аналитик, дизайнер</span>
+            </div>
+        </div>
+
+        <!-- Results Info -->
+        <div class="results-info">
+            <div class="results-count">
+                Найдено кандидатов: <span id="resultsCount">0</span>
+            </div>
+            <button class="clear-btn" id="clearSearch">
+                <i class="fas fa-times"></i>
+                Очистить поиск
+            </button>
+        </div>
+
+        <!-- Candidates Grid -->
+        <div class="candidates-grid" id="candidatesGrid">
+            <!-- Cards will be inserted here by JavaScript -->
+        </div>
+
+        <!-- No Results Message -->
+        <div class="no-results" id="noResults" style="display: none;">
+            <div class="no-results-icon">
+                <i class="fas fa-user-slash"></i>
+            </div>
+            <h3>Кандидаты не найдены</h3>
+            <p>Попробуйте изменить критерии поиска или использовать другие ключевые слова</p>
+            <div class="suggestions">
+                <div class="suggestion-tag" onclick="searchByTag('разработчик')">разработчик</div>
+                <div class="suggestion-tag" onclick="searchByTag('менеджер')">менеджер</div>
+                <div class="suggestion-tag" onclick="searchByTag('аналитик')">аналитик</div>
+                <div class="suggestion-tag" onclick="searchByTag('дизайнер')">дизайнер</div>
+                <div class="suggestion-tag" onclick="searchByTag('маркетинг')">маркетинг</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Система поиска кандидатов • Всего резюме в базе: <span id="totalCandidates">0</span></p>
+            <p>Для скачивания резюме нажмите кнопку "Скачать PDF" на карточке кандидата</p>
+        </div>
+    </div>
+
+    <script>
+        // Sample data - replace with your actual data from Django
+        const candidatesData = [
+            {% for candidate in candidates %}
+            {
+                id: {{ candidate.id }},
+                firstName: "{{ candidate.first_name }}",
+                lastName: "{{ candidate.last_name }}",
+                position: "{{ candidate.position|default:'Должность не указана' }}",
+                experience: "{{ candidate.experience|default:'Опыт не указан' }}",
+                city: "{{ candidate.city|default:'Город не указан' }}",
+                skills: "{{ candidate.skills|default:'Навыки не указаны'|slice:':100' }}",
+                employmentType: "{{ candidate.get_employment_type_display|default:'Тип занятости не указан' }}",
+                relocationReady: {{ candidate.relocation_ready|yesno:"true,false" }},
+                initials: "{{ candidate.first_name|slice:':1' }}{{ candidate.last_name|slice:':1' }}"
+            },
+            {% endfor %}
+        ];
+
+        // DOM Elements
+        const searchInput = document.getElementById('searchInput');
+        const candidatesGrid = document.getElementById('candidatesGrid');
+        const resultsCount = document.getElementById('resultsCount');
+        const noResults = document.getElementById('noResults');
+        const clearSearchBtn = document.getElementById('clearSearch');
+        const totalCandidates = document.getElementById('totalCandidates');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            totalCandidates.textContent = candidatesData.length;
+            displayCandidates(candidatesData);
+
+            // Focus search input
+            searchInput.focus();
+
+            // Add event listeners
+            searchInput.addEventListener('input', handleSearch);
+            clearSearchBtn.addEventListener('click', clearSearch);
+
+            // Add keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    clearSearch();
+                }
+                if (e.ctrlKey && e.key === 'f') {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
+            });
+        });
+
+        // Display candidates function
+        function displayCandidates(candidates) {
+            candidatesGrid.innerHTML = '';
+            resultsCount.textContent = candidates.length;
+
+            if (candidates.length === 0) {
+                candidatesGrid.classList.add('hidden');
+                noResults.style.display = 'block';
+                return;
+            }
+
+            candidatesGrid.classList.remove('hidden');
+            noResults.style.display = 'none';
+
+            // Add fade-in animation with delay
+            candidates.forEach((candidate, index) => {
+                const card = createCandidateCard(candidate, index);
+                candidatesGrid.appendChild(card);
+
+                // Staggered animation
+                setTimeout(() => {
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 50);
+            });
+        }
+
+        // Create candidate card HTML
+        function createCandidateCard(candidate, index) {
+            const card = document.createElement('div');
+            card.className = 'candidate-card';
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            card.style.transitionDelay = `${index * 0.05}s`;
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="candidate-avatar">${candidate.initials}</div>
+                    <div class="candidate-name">${candidate.lastName} ${candidate.firstName}</div>
+                    <div class="candidate-position">${candidate.position}</div>
+                </div>
+                <div class="card-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">Опыт работы</div>
+                                <div class="info-value">${candidate.experience}</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">Местоположение</div>
+                                <div class="info-value">${candidate.city}</div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">Тип занятости</div>
+                                <div class="info-value">${candidate.employmentType}</div>
+                            </div>
+                        </div>
+                        ${candidate.relocationReady ? `
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-truck-moving"></i>
+                            </div>
+                            <div class="info-content">
+                                <div class="info-label">Готовность к переезду</div>
+                                <div class="info-value">Да</div>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <a href="/profile/${candidate.id}/pdf/" class="pdf-btn" target="_blank">
+                        <i class="fas fa-file-pdf"></i>
+                        Скачать PDF
+                    </a>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Search function
+        function handleSearch() {
+            const searchTerm = searchInput.value.toLowerCase().trim();
+
+            if (searchTerm === '') {
+                displayCandidates(candidatesData);
+                return;
+            }
+
+            const filteredCandidates = candidatesData.filter(candidate => {
+                // Search in position, skills, and experience
+                return (
+                    candidate.position.toLowerCase().includes(searchTerm) ||
+                    candidate.skills.toLowerCase().includes(searchTerm) ||
+                    candidate.experience.toLowerCase().includes(searchTerm) ||
+                    candidate.employmentType.toLowerCase().includes(searchTerm)
+                );
+            });
+
+            displayCandidates(filteredCandidates);
+
+            // Show search term in results info
+            if (searchTerm) {
+                resultsCount.innerHTML = `${filteredCandidates.length} <small style="font-size: 0.9rem; color: #666; font-weight: normal;">по запросу "${searchTerm}"</small>`;
+            }
+        }
+
+        // Clear search function
+        function clearSearch() {
+            searchInput.value = '';
+            displayCandidates(candidatesData);
+            searchInput.focus();
+        }
+
+        // Search by tag function
+        function searchByTag(tag) {
+            searchInput.value = tag;
+            handleSearch();
+        }
+
+        // Debounce function for better performance
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Apply debounce to search input
+        searchInput.addEventListener('input', debounce(handleSearch, 300));
+
+        // Add loading animation for PDF download
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('.pdf-btn')) {
+                const btn = e.target.closest('.pdf-btn');
+                const originalHTML = btn.innerHTML;
+
+                btn.innerHTML = `
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Подготовка PDF...
+                `;
+                btn.style.opacity = '0.7';
+                btn.style.pointerEvents = 'none';
+
+                // Reset after 3 seconds in case of error
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.style.opacity = '1';
+                    btn.style.pointerEvents = 'auto';
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>

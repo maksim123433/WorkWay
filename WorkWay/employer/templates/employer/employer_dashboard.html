@@ -55,10 +55,10 @@
                         </div>
                         <h4>Новая вакансия</h4>
                         <p>Создайте новую вакансию для поиска сотрудников</p>
-                        <div class="btn-quick">
+                         <button class="btn-primary" onclick="showCreateForm()">
                             <i class="fas fa-plus"></i>
-                            <span>Создать</span>
-                        </div>
+                            <span>Создать вакансию</span>
+                        </button>
                     </div>
 
                     <div class="sidebar-action-card">
@@ -67,23 +67,14 @@
                         </div>
                         <h4>Поиск кандидатов</h4>
                         <p>Найдите подходящих кандидатов по базе резюме</p>
-                        <div class="btn-quick">
+                       <a href="{% url 'candidate_list' %}?q={{ search_query }}" class="btn-quick">
                             <i class="fas fa-search"></i>
                             <span>Найти</span>
-                        </div>
+                        </a>
+
                     </div>
 
-                    <div class="sidebar-action-card">
-                        <div class="action-icon">
-                            <i class="fas fa-envelope-open"></i>
-                        </div>
-                        <h4>Новые отклики</h4>
-                        <p>Просмотр новых откликов на вакансии ({{ new_responses }})</p>
-                        <div class="btn-quick check__btn">
-                            <i class="fas fa-eye"></i>
-                            <span>Просмотреть</span>
-                        </div>
-                    </div>
+
                 </div>
 
                 <div class="sidebar-stats">
@@ -93,10 +84,7 @@
                             <span class="stat-value">{{ active_vacancies }}</span>
                             <span class="stat-label">Активных вакансий</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-value">{{ total_applications }}</span>
-                            <span class="stat-label">Всего откликов</span>
-                        </div>
+
                         <div class="stat-item">
                             <span class="stat-value">{{ vacancies_count }}</span>
                             <span class="stat-label">Всего вакансий</span>
@@ -397,14 +385,7 @@
                                 {% endif %}
 
                                 <div class="vacancy-stats">
-                                    <div class="stat">
-                                        <i class="fas fa-eye"></i>
-                                        <span>{{ vacancy.views_count }} просмотров</span>
-                                    </div>
-                                    <div class="stat">
-                                        <i class="fas fa-paper-plane"></i>
-                                        <span>{{ vacancy.applications_count }} откликов</span>
-                                    </div>
+
                                     <div class="stat">
                                         <i class="fas fa-briefcase"></i>
                                         <span>{{ vacancy.get_experience_display_short }}</span>
@@ -428,7 +409,7 @@
                                 <!-- Отклики -->
                                 <button class="btn-action btn-applications" data-vacancy-id="{{ vacancy.id }}">
                                     <i class="fas fa-users"></i>
-                                    <span>Отклики ({{ vacancy.applications_count }})</span>
+                                    <span>Отклики </span>
                                 </button>
 
                                 <!-- Статус -->

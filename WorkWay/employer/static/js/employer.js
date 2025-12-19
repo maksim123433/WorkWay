@@ -487,7 +487,7 @@ function showVacancyDetails(vacancyId) {
                             <span>${data.views_count || 0}</span>
                         </div>
                         <div class="detail-item">
-                            <strong>Отклики:</strong>
+                            <strong>Отклики</strong>
                             <span>${data.applications_count || 0}</span>
                         </div>
                         <div class="detail-item">
@@ -965,124 +965,127 @@ function closeVacancyModal() {
 // ========== ПРОСТОЕ МОДАЛЬНОЕ ОКНО ОТКЛИКОВ ==========
 
 function showApplicationsModalSimple(vacancyId, data) {
-    console.log('Создаем модальное окно для откликов вакансии:', vacancyId);
-    console.log(data, 'data------------------>');
+    console.log('Показываем отклики для вакансии:', vacancyId);
+    console.log('Данные:', data);
 
     const modalOtklick = document.querySelector('.modal-otklick');
 
-    // Очищаем и наполняем содержимое
+    // Получаем данные
+    const persons = data.persons || [];
+    const personsCount = data.count || persons.length;
+
+    // Создаем HTML для каждого отклика
+    let personsHTML = '';
+
+    if (persons.length === 0) {
+        personsHTML = `
+            <div class="otklick-empty">
+                <i class="fas fa-user-slash"></i>
+                <h3>На эту вакансию пока нет откликов</h3>
+            </div>
+        `;
+    } else {
+        persons.forEach(person => {
+            // Основная информация
+            const fullName = `${person.first_name || ''} ${person.last_name || ''}`.trim() || 'Анонимный соискатель';
+            const email = person.email || null;
+            const phone = person.phone || null;
+            const city = person.city || null;
+            const country = person.country || null;
+            const experience = person.experience || null;
+            const position = person.position || null;
+            const about = person.about ? (person.about.length > 100 ? person.about.substring(0, 100) + '...' : person.about) : null;
+
+            // Дата отклика
+            const date = new Date(person.created_at);
+            const relativeTime = getRelativeTime(date);
+
+            personsHTML += `
+                <div class="otklick-card">
+                    <div class="otklick-card-top">
+                        <div class="otklick-card-info">
+                            <div class="otklick-card-name">
+                                <i class="fas fa-user-circle"></i>
+                                ${escapeHtml(fullName)}
+                            </div>
+                            <div class="otklick-card-contact">
+                                ${email ? `
+                                    <div class="otklick-card-email">
+                                        <i class="fas fa-envelope"></i>
+                                        <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a>
+                                    </div>
+                                ` : ''}
+                                ${phone ? `
+                                    <div class="otklick-card-phone">
+                                        <i class="fas fa-phone"></i>
+                                        <a href="tel:${phone.replace(/\s+/g, '')}">${phone}</a>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="otklick-card-actions">
+                        ${email ? `
+
+                        ` : `
+                            <button class="otklick-btn otklick-btn-contact" disabled>
+                                <i class="fas fa-comment"></i> Email не указан
+                            </button>
+                        `}
+
+                        <button class="otklick-btn otklick-btn-profile" onclick="window.open('/profile/${person.id}/pdf/', '_blank')">
+                            Скачать PDF
+                        </button>
+
+                    </div>
+                </div>
+            `;
+        });
+    }
+
+    // Собираем всё HTML
     modalOtklick.innerHTML = `
         <div class="modal-otklick-content">
             <button class="modal-otklick-close">
                 <i class="fas fa-times"></i>
             </button>
+
             <div class="modal-otklick-header">
                 <h2>
                     <i class="fas fa-users"></i>
-                    Отклики на вакансию #${vacancyId}
-                    <span class="modal-otklick-count">${data.count || 0}</span>
+                    Отклики на вакансию
+
                 </h2>
             </div>
+
             <div class="modal-otklick-body">
-                ${getOtklickContent(data)}
+                ${personsCount > 0 ? `<div class="otklick-list">${personsHTML}</div>` : personsHTML}
+
+                ${personsCount > 0 ? `<button class="otklick-btn-close">Закрыть</button>` : ''}
             </div>
         </div>
     `;
 
     // Показываем окно
     modalOtklick.style.display = 'block';
+    document.body.style.overflow = 'hidden';
 
-    // Вешаем обработчики
+    // Вешаем обработчики закрытия
     setupOtklickModalEvents();
 }
 
-// Функция для создания контента
-function getOtklickContent(data) {
-    const persons = data.persons || [];
-
-    if (persons.length === 0) {
-        return `
-            <div class="otklick-empty">
-                <div class="otklick-empty-icon">
-                    <i class="fas fa-user-slash"></i>
-                </div>
-                <h3>На эту вакансию пока нет откликов</h3>
-                <p>Здесь будут появляться отклики соискателей</p>
-            </div>
-        `;
-    }
-
-    let html = '<div class="otklick-list">';
-
-    persons.forEach(person => {
-        const date = new Date(person.created_at);
-        const formattedDate = date.toLocaleDateString('ru-RU', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
-
-        const relativeTime = getRelativeTime(date);
-        const personName = person.name || 'Анонимный соискатель';
-
-        html += `
-            <div class="otklick-card">
-                <div class="otklick-card-header">
-                    <div class="otklick-card-info">
-                        <div class="otklick-card-name">
-                            <i class="fas fa-user-circle"></i>
-                            ${escapeHtml(personName)}
-                        </div>
-                        <div class="otklick-card-email">
-                            <i class="fas fa-envelope"></i>
-                            ${person.email ?
-                                `<a href="mailto:${escapeHtml(person.email)}">${escapeHtml(person.email)}</a>` :
-                                '<span style="color: #64748b;">Email не указан</span>'
-                            }
-                        </div>
-                    </div>
-                    <div class="otklick-card-date" title="${formattedDate}">
-                        <i class="far fa-clock"></i>
-                        ${relativeTime}
-                    </div>
-                </div>
-                <div class="otklick-card-actions">
-                    ${person.email ? `
-                    <button class="otklick-btn otklick-btn-contact"
-                            onclick="contactApplicant('${escapeHtml(person.email)}')">
-                        <i class="fas fa-comment"></i>
-                        Написать
-                    </button>
-                    ` : `
-                    <button class="otklick-btn otklick-btn-contact" disabled style="opacity: 0.5;">
-                        <i class="fas fa-comment"></i>
-                        Email не указан
-                    </button>
-                    `}
-                </div>
-            </div>
-        `;
-    });
-
-    html += '</div>';
-
-    // Кнопка закрытия
-    html += `<button class="otklick-btn-close">Закрыть</button>`;
-
-    return html;
-}
-
-// Функция для обработчиков событий
+// Функция для обработчиков событий (простая версия)
 function setupOtklickModalEvents() {
     const modal = document.querySelector('.modal-otklick');
     const closeBtn = modal.querySelector('.modal-otklick-close');
     const closeBottomBtn = modal.querySelector('.otklick-btn-close');
 
-    // Функция закрытия
     function closeModal() {
         modal.style.display = 'none';
+        document.body.style.overflow = '';
     }
 
     // Закрытие по крестику
@@ -1106,7 +1109,7 @@ function setupOtklickModalEvents() {
     });
 }
 
-// Вспомогательные функции
+// Остальные функции оставляем как есть
 function getRelativeTime(date) {
     const now = new Date();
     const diffMs = now - date;
@@ -1134,9 +1137,15 @@ function escapeHtml(text) {
 }
 
 function contactApplicant(email) {
-    if (!email || email === 'Email не указан') {
+    if (!email) {
         alert('У соискателя не указан email');
         return;
     }
-    window.location.href = `mailto:${email}?subject=Ваш отклик на вакансию`;
+    window.location.href = `mailto:${email}?subject=Отклик на вакансию`;
+}
+
+function viewApplicantProfile(applicantId) {
+    console.log('Просмотр профиля:', applicantId);
+    // Здесь можно добавить переход на профиль
+    // window.location.href = `/profile/${applicantId}/`;
 }

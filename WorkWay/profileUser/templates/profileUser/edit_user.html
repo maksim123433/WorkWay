@@ -1,0 +1,443 @@
+<!-- templates/edit_profile.html -->
+{% load static %}
+
+
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorkWay - Редактирование профиля</title>
+    <link rel="stylesheet" href="{% static 'css/profileUser.css' %}">
+    <link rel="stylesheet" href="{% static 'css/edit_profile.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Градиентные волны -->
+    <div class="gradient-wave wave-1"></div>
+    <div class="gradient-wave wave-2"></div>
+    <div class="gradient-wave wave-3"></div>
+
+    <div class="container">
+        <!-- Шапка -->
+        <header class="edit-profile-header">
+            <div class="logo-container">
+                <a href="{% url 'main' %}" class="logo-link">
+                    <div class="logo-wrapper">
+                        <div class="logo-icon">
+                            <i class="fas fa-route"></i>
+                        </div>
+                        <div class="logo-text">
+                            <h1 class="logo-title">
+                                <span class="logo-highlight">Work</span><span class="logo-second">Way</span>
+                            </h1>
+                            <p class="logo-subtitle">Редактирование профиля</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'profile' %}" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Назад к профилю</span>
+                </a>
+                <a href="{% url 'main' %}" class="btn-secondary">
+                    <i class="fas fa-home"></i>
+                    <span>На главную</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Сообщения -->
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                <i class="fas fa-{% if message.tags == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i>
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if form.errors %}
+        <div class="form-errors">
+            <div class="error-alert">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Пожалуйста, исправьте ошибки в форме</span>
+            </div>
+            <ul class="error-list">
+                {% for field in form %}
+                    {% if field.errors %}
+                        <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
+                    {% endif %}
+                {% endfor %}
+                {% if form.non_field_errors %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endif %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="edit-profile-content">
+            <div class="edit-profile-container">
+                <!-- Информация о типе аккаунта -->
+                <div class="account-type-info">
+                    <div class="type-badge {% if profile.account_type == 'job_seeker' %}job-seeker{% else %}employer{% endif %}">
+                        {% if profile.account_type == 'job_seeker' %}
+                            <i class="fas fa-user-graduate"></i>
+                            <span>Соискатель</span>
+                        {% else %}
+                            <i class="fas fa-briefcase"></i>
+                            <span>Работодатель</span>
+                        {% endif %}
+                    </div>
+                    <p class="type-description">
+                        {% if profile.account_type == 'job_seeker' %}
+                            Вы можете редактировать поля профиля соискателя
+                        {% else %}
+                            Вы можете редактировать поля профиля работодателя
+                        {% endif %}
+                    </p>
+                </div>
+
+                <!-- Форма редактирования -->
+                <form method="POST" class="edit-profile-form" id="profileForm">
+                    {% csrf_token %}
+
+                    <!-- Тип аккаунта (только для просмотра) -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-user-tag"></i> Информация об аккаунте
+                        </h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="id_account_type_display">Тип аккаунта</label>
+                                <input type="text"
+                                       class="form-control"
+                                       value="{% if profile.account_type == 'job_seeker' %}Соискатель{% else %}Работодатель{% endif %}"
+                                       readonly>
+                                <small class="form-help">Тип аккаунта выбран при регистрации и не может быть изменен</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Основная информация (доступна всем) -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-user"></i> Основная информация
+                        </h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="id_first_name">Имя *</label>
+                                {{ form.first_name }}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_last_name">Фамилия *</label>
+                                {{ form.last_name }}
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="id_email">Email *</label>
+                                {{ form.email }}
+                                <small class="form-help">Email используется для входа и не может быть изменен</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_phone">Телефон</label>
+                                {{ form.phone }}
+                                <small class="form-help">Формат: +7 XXX XXX-XX-XX</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Местоположение (доступно всем) -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-map-marker-alt"></i> Местоположение
+                        </h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="id_city">Город</label>
+                                {{ form.city }}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_country">Страна</label>
+                                {{ form.country }}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_citizenship">Гражданство</label>
+                                {{ form.citizenship }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Персональные данные (доступны всем) -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-id-card"></i> Персональные данные
+                        </h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="id_birth_date">Дата рождения</label>
+                                {{ form.birth_date }}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_gender">Пол</label>
+                                {{ form.gender }}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_marital_status">Семейное положение</label>
+                                {{ form.marital_status }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Блок для соискателя -->
+                    {% if profile.account_type == 'job_seeker' %}
+                    <div class="form-section job-seeker-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-user-graduate"></i> Информация для соискателя
+                        </h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="id_position">Желаемая должность</label>
+                                {{ form.position }}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_experience">Опыт работы</label>
+                                {{ form.experience }}
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="id_employment_type">Тип занятости</label>
+                                {{ form.employment_type }}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_work_schedule">График работы</label>
+                                {{ form.work_schedule }}
+                            </div>
+                        </div>
+
+                        <div class="form-check-group">
+                            <div class="form-check">
+                                {{ form.relocation_ready }}
+                                <label for="id_relocation_ready">Готов к переезду</label>
+                            </div>
+
+                            <div class="form-check">
+                                {{ form.business_trips_ready }}
+                                <label for="id_business_trips_ready">Готов к командировкам</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_skills">Ключевые навыки</label>
+                            {{ form.skills }}
+                            <small class="form-help">Каждый навык с новой строки или через запятую</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_languages">Иностранные языки</label>
+                            {{ form.languages }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_education">Образование</label>
+                            {{ form.education }}
+                        </div>
+
+                        {% if form.previous_positions_json %}
+                        <div class="form-group">
+                            <label for="id_previous_positions_json">Предыдущие должности</label>
+                            {{ form.previous_positions_json }}
+                            <small class="form-help">
+                                В формате JSON. Пример:
+                            </small>
+
+                            <div class="json-example">
+<pre>[
+  {
+    "period": "2020-2022",
+    "position": "Python разработчик",
+    "company": "ООО Технологии",
+    "description": "Разработка backend для веб-приложений"
+  }
+]</pre>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="form-group">
+                            <label for="id_achievements">Достижения</label>
+                            {{ form.achievements }}
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="id_portfolio_link">Ссылка на портфолио</label>
+                                {{ form.portfolio_link }}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_github_url">GitHub профиль</label>
+                                {{ form.github_url }}
+                            </div>
+                        </div>
+
+                        <div class="form-check-group">
+                            <div class="form-check">
+                                {{ form.driving_license }}
+                                <label for="id_driving_license">Есть водительские права</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="license-category-group">
+                            <label for="id_driver_license_category">Категория прав</label>
+                            {{ form.driver_license_category }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Блок для работодателя -->
+                    {% if profile.account_type == 'employer' %}
+                    <div class="form-section employer-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-building"></i> Информация о компании
+                        </h3>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="id_company_name">Название компании</label>
+                                {{ form.company_name }}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_industry">Сфера деятельности</label>
+                                {{ form.industry }}
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="id_company_size">Количество сотрудников</label>
+                                {{ form.company_size }}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="id_company_website">Сайт компании</label>
+                                {{ form.company_website }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_company_description">Описание компании</label>
+                            {{ form.company_description }}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_company_address">Адрес компании</label>
+                            {{ form.company_address }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- О себе (доступно всем) -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-edit"></i> О себе
+                        </h3>
+
+                        <div class="form-group">
+                            <label for="id_about">Расскажите о себе</label>
+                            {{ form.about }}
+                            <small class="form-help">
+                                {% if profile.account_type == 'employer' %}
+                                    Расскажите о вашем опыте как работодателя
+                                {% else %}
+                                    Расскажите о ваших профессиональных интересах
+                                {% endif %}
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Настройки (доступны всем) -->
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-cog"></i> Настройки
+                        </h3>
+
+                        <div class="form-check-group">
+                            <div class="form-check">
+                                {{ form.newsletter }}
+                                <label for="id_newsletter">Подписаться на рассылку</label>
+                                <small class="form-help">Получать новости и обновления</small>
+                            </div>
+                        </div>
+
+                        <div class="password-section">
+                            <h4><i class="fas fa-lock"></i> Смена пароля (опционально)</h4>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="id_new_password">Новый пароль</label>
+                                    {{ form.new_password }}
+                                    <small class="form-help">Оставьте пустым, если не хотите менять пароль</small>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="id_confirm_password">Подтвердите пароль</label>
+                                    {{ form.confirm_password }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Кнопки -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary btn-save">
+                            <i class="fas fa-save"></i>
+                            <span>Сохранить изменения</span>
+                        </button>
+
+                        <a href="{% url 'profile' %}" class="btn-secondary btn-cancel">
+                            <i class="fas fa-times"></i>
+                            <span>Отмена</span>
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <footer class="edit-profile-footer">
+            <p>© 2024 WorkWay. Все права защищены.</p>
+            <p>Тип аккаунта: <strong>
+                {% if profile.account_type == 'job_seeker' %}
+                    Соискатель
+                {% else %}
+                    Работодатель
+                {% endif %}
+            </strong> (нельзя изменить)</p>
+        </footer>
+    </div>
+
+    <script src="{% static 'js/edit_profile.js' %}"></script>
+</body>
+</html>

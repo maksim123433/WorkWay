@@ -49,11 +49,11 @@ class EducationLevel(models.TextChoices):
 
 class Currency(models.TextChoices):
     """Валюты"""
-    RUB = 'RUB', '₽ Рубли'
-    USD = 'USD', '$ Доллары'
-    EUR = 'EUR', '€ Евро'
-    KZT = 'KZT', '₸ Тенге'
-    BYN = 'BYN', 'Br Белорусские рубли'
+    RUB = 'RUB', '₽'
+    USD = 'USD', '$'
+    EUR = 'EUR', '€'
+    KZT = 'KZT', '₸'
+    BYN = 'BYN', 'Br'
 
 
 class Vacancy(models.Model):
